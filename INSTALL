@@ -1,0 +1,3 @@
+Just drop the imaplib2 dir on a directory on your PYTHONPATH. 
+
+To use take a look at the __doc__ strings and the examples embeded on the code.
