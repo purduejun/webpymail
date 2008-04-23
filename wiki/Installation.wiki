@@ -1,0 +1,75 @@
+#summary Installation instructions
+#labels Featured
+
+= Warning =
+
+Webpymail is still on its early development stages, it's not yet
+feature complete and could possibly cause damage to you data.
+
+= Dependencies =
+
+To test webpymail you need:
+
+  # Django svn
+  # Python 2.5
+
+= Installation steps =
+
+  * Get python and django working;
+  * Choose a suitable folder and checkout webpymail source code:
+
+{{{
+svn checkout http://webpymail.googlecode.com/svn/trunk/ webpymail-source
+}}}
+
+  * Add the webpymail-source dir to your PYTHONPATH
+
+{{{
+cd webpymail-source
+export PYTHONPATH=`pwd`:$PYTHONPATH
+}}}
+
+  * Edit the webpymail/settings.py file according to your needs, the most important setting is:
+
+{{{
+SMTPHOST = 'your smtp server'
+}}}
+
+Please note that, for the moment, no auth is supported on the smtp server.
+
+  * Create the temporary directory to store the attachments while composing a message, by default:
+
+{{{
+mkdir /tmp/webpymail
+}}}
+
+  * Go to the webpymail dir and create the data base:
+
+{{{
+$ cd webpymail
+$ python manage.py syncdb
+[... snip ...]
+Creating table mailapp_userprofile
+
+You just installed Django's auth system, which means you don't have
+any superusers defined.
+Would you like to create one now? (yes/no): yes
+Username (Leave blank to use 'helder'):
+E-mail address: helder@paxjulia.com
+Password:
+Password (again):
+Superuser created successfully.
+[... snip ...]
+}}}
+
+You must create a superuser, this user will be needed to configure the IMAP servers.
+
+  * Start the Django included web server:
+
+{{{
+$ python manage.py runserver
+}}}
+
+  * Now you need to configure the IMAP server(s) to use. Go to http://127.0.0.1:8000/admin login with the user you've created and add an IMAP server. Logout.
+
+  * Finally you can access the webmail app, just go to: http://127.0.0.1:8000/mail/ . Login with a valid user on the IMAP server.
