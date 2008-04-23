@@ -1,0 +1,190 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+{% load mailtags %}
+
+
+{% block headercontent %}
+<link href="/media/css/message.css" rel="stylesheet" type="text/css"></link>
+{% endblock %}
+
+{% block inpage_title %}{% trans "Message" %}{% endblock %}
+
+{% block extra_menus %}<a href="{% url message_list folder.url %}">
+{% trans "Message List" %}</a>&nbsp;&nbsp;
+<a href="{% url folder_list %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;{% endblock %}
+
+{% block contents %}
+<div id="sub_menu">
+    <div id="sub_menu_right">
+        <a href="{% url not_implemented %}">{% trans "Delete" %}</a>
+    </div>
+    <a href="{% url mailapp_reply_message folder=message.folder.url,uid=message.uid %}">{% trans "Reply" %}</a>&nbsp;&nbsp;
+    <a href="{% url mailapp_reply_all_message folder=message.folder.url,uid=message.uid %}">{% trans "Reply All" %}</a>&nbsp;&nbsp;
+    <a href="{% url mailapp_forward_inline_message folder=message.folder.url,uid=message.uid %}">{% trans "Forward" %}</a>&nbsp;&nbsp;
+    <a href="{% url mailapp_forward_message folder=message.folder.url,uid=message.uid %}">{% trans "Forward as Attachment" %}</a>
+</div>
+
+
+{# Message header #}
+
+<div class="message">
+<div class="subject">
+{% if message.envelope.env_subject %}{{ message.envelope.env_subject }}{% else %}{% trans "(No subject)" %}{% endif %}
+</div>
+<div class="fields">
+<table>
+    {% if message.envelope.env_from %}
+    <tr>
+    <th>{% trans "From:" %}</th>
+    <td>{% for addr in message.envelope.env_from %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if message.envelope.env_to %}
+    <tr>
+    <th>{% trans "To:" %}</th>
+    <td>{% for addr in message.envelope.env_to %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if message.envelope.env_cc %}
+    <tr>
+    <th>{% trans "Cc:" %}</th>
+    <td>{% for addr in message.envelope.env_cc %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if message.envelope.env_bcc %}
+    <tr>
+    <th>{% trans "Cc:" %}</th>
+    <td>{% for addr in message.envelope.env_bcc %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if message.envelope.env_date %}
+    <tr>
+    <th>{% trans "Date:" %}</th>
+    <td>{{ message.envelope.env_date }}</td>
+    </tr>
+    {% endif %}
+</table>
+</div>
+<div class="message_body">
+
+{% for part in message.bodystructure.serial_message %}
+    {% if part.is_text %}
+        {% if part.test_plain %}
+            <pre>{% part_text message part "Plain" %}</pre>
+        {% endif %}
+        {% if part.test_html %}
+        <div class="attach_link">
+            <a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">
+            {% trans "View HTML message" %}</a> - 
+            {% trans "Please note that viewing html messages may pose a security risk." %}
+        </div>
+        {% endif %}
+    {% endif %}
+    
+    {% if part.is_encapsulated %}
+        {% if part.is_start %}
+<div class="enc_message">
+<div class="enc_msg_title">{% trans "Encapsuplated Message" %}</div>
+<div class="subject">
+{% if part.envelope.env_subject %}{{ part.envelope.env_subject }}{% else %}{% trans "(No subject)" %}{% endif %}
+</div>
+<div class="fields">
+<table>
+    {% if part.envelope.env_from %}
+    <tr>
+    <th>{% trans "From:" %}</th>
+    <td>{% for addr in part.envelope.env_from %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if part.envelope.env_to %}
+    <tr>
+    <th>{% trans "To:" %}</th>
+    <td>{% for addr in part.envelope.env_to %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if part.envelope.env_cc %}
+    <tr>
+    <th>{% trans "Cc:" %}</th>
+    <td>{% for addr in part.envelope.env_cc %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if part.envelope.env_bcc %}
+    <tr>
+    <th>{% trans "Cc:" %}</th>
+    <td>{% for addr in part.envelope.env_bcc %}
+        {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+    {% endfor %}</td>
+    </tr>
+    {% endif %}
+    
+    {% if part.envelope.env_date %}
+    <tr>
+    <th>{% trans "Date:" %}</th>
+    <td>{{ part.envelope.env_date }}</td>
+    </tr>
+    {% endif %}
+</table>
+</div>
+<div class="message_body">
+        {% else %}
+</div>
+</div>
+        {% endif %}
+    {% endif %} {# End of embeded message #}
+           
+    {% if part.is_attachment %}
+<div class="attach_link">
+<table>
+    <tr>
+        <th>{% trans "Part number:" %}</th>
+        <td>{{ part.part_number }}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Mime type:" %}</th>
+        <td>{{ part.media }}/{{part.media_subtype}}</td>
+    </tr>
+    <tr>
+        <th>{% trans "File Name:" %}</th>
+        <td>{% if part.filename %}{{ part.filename }}{% else %}{% trans "Unknown" %}{% endif %}</td>
+    </tr>
+    <tr>
+        <th>{% trans "Size:" %}</th>
+        <td>{{ part.body_fld_octets }} {% trans "B" %}</td>
+    </tr>
+    <tr>
+        <th colspan=2><!-- TODO: {# {% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %} #}-->
+<a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">{% trans "Download" %}</a></th>        
+    </tr>
+</table>
+</div>
+    {% endif %}
+{% endfor %}
+
+</div>
+</div>
+<div class="message_info">
+<p><a href="{% url mailapp_message_header folder=message.folder.url,uid=message.uid %}">{% trans "Message Header" %}</a>|
+<a href="{% url mailapp_message_structure folder=message.folder.url,uid=message.uid %}">{% trans "Message Structure" %}</a>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base/base.html" %}
+{% load i18n %}
+
+{% block inpage_title %}{% trans "Folder List" %}{% endblock %}
+
+{% block contents %}
+{% for folder in folders %}
+{% if folder.folder.noselect %}
+    {{ folder.unicode }}<br />
+{% else %}
+    <a href="{% url message_list folder.url %}">{{ folder.unicode }}</a>
+    ({{ folder.status.UNSEEN }}/{{ folder.status.MESSAGES }})<br />
+{% endif %}{% endfor %}
+{% endblock %}
