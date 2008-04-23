@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load i18n %}
+<html>
+<head>
+    <title>{% block title %}{% trans "WebPyMail" %}{% endblock %}</title>
+    <link href="/media/css/normal.css" rel="stylesheet" type="text/css"></link>
+    {% block headercontent %}{% endblock %}
+</head>
+<body>
+<h1>{% block inpage_title %}{% endblock %}</h1>
+
+<div id="header_main">
+    <div id="header_right">
+        <a href="{% url not_implemented %}">{% trans "Options" %}</a>&nbsp;&nbsp;
+        <a href="{% url not_implemented %}">{% trans "About" %}</a>&nbsp;&nbsp;
+        <a href="{% url logout %}">{% trans "Logout" %}</a>
+    </div>
+    {% block extra_menus %}{% endblock %}
+    <a href="{% url mailapp_send_message folder=folder.folder %}">{% trans "Compose" %}</a>&nbsp;&nbsp;
+    <a href="{% url not_implemented %}">{% trans "Search" %}</a>&nbsp;&nbsp;
+    <a href="{% url not_implemented %}">{% trans "Manage Folders" %}</a>
+</div>
+
+<!-- The Main Body -->
+<div id="contents">{% block contents %}{% endblock %}
+</div>
+
+<!-- Footer -->
+<div id="footer">
+    {% block footer %}{% trans "---- \O=o> ----" %}{% endblock %}
+</div>
+
+{% block endscripts %}{% endblock %}
+</body>
+</html>
