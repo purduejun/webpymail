@@ -1,0 +1,49 @@
+#summary Notes about the IMAP libs
+
+= Whats inside the imaplib2 package? =
+
+    * *Class IMAP4* - very simple IMAP client;
+    * *Class IMAP4_SSL* - very simple IMAP client, SSL version;
+    * *Class IMAP4P* - parsed IMAP client;
+
+= Why do another IMAP library? =
+
+Strictly speaking there is no need for us to have a new IMAP lib in python. True, the standard lib is not very pythonic, and could use some love, but overall it does its job fairly well.
+
+I went the way of making a new lib simply because it made things easier for me on the parsing side. For instance, in imaplib, if I invoque a fetch command I might get something like:
+
+{{{
+>>> M.fetch('1', '(BODY[1] BODY[2])')
+('OK',
+ [('1 (BODY[1] {5}', 'Test1'),
+  (' BODY[2] {879}',
+   "...snip 879 chars..."),
+  ')'])
+}}}
+
+While in imaplib2 using the low level library I get:
+
+{{{
+>>> M.send_command('FETCH 1 (BODY[1] BODY[2])')
+('KPDE003',
+{'untagged':
+["* 1 FETCH (BODY[1] {5}\r\nTest1 BODY[2] {879}\r\n...snip 879 chars..."], 'tagged': {'KPDE003':
+            {'status': 'OK',
+             'message': 'Completed (0.000 sec)',
+             'tag': 'KPDE003',
+             'command': 'FETCH 1 (BODY[1] BODY[2])'}}})
+}}}
+
+The untagged responses come in a list, with a complete response per list item, the tagged responses are clearly layed out in a dictionary, identifying each response with the associated tag.
+
+Naturaly I could have wrapped imaplib to get the same result, but in that case I would have to live also with all the other stuff in there. Instead I borrowed the socket code, and went from there.
+
+BTW for the same example as above with the parsed library I get:
+
+{{{
+>>> M.fetch( 1, '(BODY[1] BODY[2])' )
+{1: {'BODY[1]': 'Test1', 'BODY[2]': "...snip 879 chars..."}}
+}}}
+
+
+
