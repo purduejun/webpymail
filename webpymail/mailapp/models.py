@@ -21,10 +21,10 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-23 19:15:37 +0100 (Wed, 23 Apr 2008) $
-# $LastChangedRevision: 321M $
-# $LastChangedBy: (local) $
-# 
+# $LastChangedDate: 2008-05-10 16:22:53 +0100 (Sat, 10 May 2008) $
+# $LastChangedRevision: 334 $
+# $LastChangedBy: helder $
+#
 
 '''Model file for the mailapp'''
 
@@ -35,49 +35,45 @@ from django.utils.translation import gettext_lazy as _
 
 # Models:
 
-# TODO: This table should live on the wpmauth app, only the necessary info
-# to login on the server should be used. The mailapp will depend on the 
-# wpmauth app and the ImapServer table will have a one to one relation
-# to the server table on wpmauth.
-class ImapServer(models.Model):
-    name  = models.CharField(verbose_name=_('Server name'),
-        max_length=128)
-    host  = models.CharField(verbose_name=_('Host name'),
-        max_length=128)
-    port  = models.PositiveIntegerField(verbose_name=_('Port number'),
-        default=143)
-    is_ssl = models.BooleanField(verbose_name=_('Is ssl'),
-        default=False)
-
-    def __unicode__(self):
-        return self.name
-        
-    class Admin:
-        list_display = ('name', 'is_ssl', )
-        
-    class Meta:
-        verbose_name = _('Imap Server')
-        verbose_name_plural = _('Imap Servers')
-
 class UserIdentity(models.Model):
     profile = models.ForeignKey('UserProfile')
-    name  = models.CharField(verbose_name=_('User name'),
-        max_length=128, blank=True)
-    mail_address = models.EmailField(verbose_name=_('Mail address'),
-        max_length=128)
-    signature = models.TextField(max_length=1024,verbose_name=_('Signature'),
+
+    name  = models.CharField(
+        verbose_name=_('User name'),
+        max_length=128,
         blank=True)
-    use_signature = models.BooleanField(verbose_name=_('Use signature'),
+
+    mail_address = models.EmailField(
+        verbose_name=_('Mail address'),
+        max_length=128)
+
+    signature = models.TextField(
+        max_length=1024,
+        verbose_name=_('Signature'),
+        blank=True)
+
+    use_signature = models.BooleanField(
+        verbose_name=_('Use signature'),
         default=True)
-    use_doubledash = models.BooleanField(verbose_name=_('Use double dash'),
-        default=True) 
-    time_zone = models.CharField(verbose_name=_('Time zone'),
+
+    use_doubledash = models.BooleanField(
+        verbose_name=_('Use double dash'),
+        default=True)
+
+    time_zone = models.CharField(
+        verbose_name=_('Time zone'),
         max_length=64, default='GMT')
-    citation_start = models.TextField(max_length=256,
-        verbose_name=_('Citation start'), blank = True)
-    citation_end = models.TextField(max_length=256,
-        verbose_name=_('Citation end'), blank = True)
-        
+
+    citation_start = models.TextField(
+        max_length=256,
+        verbose_name=_('Citation start'),
+        blank = True)
+
+    citation_end = models.TextField(
+        max_length=256,
+        verbose_name=_('Citation end'),
+        blank = True)
+
     def __unicode__(self):
         if self.name:
             return '"%s" <%s>' % (self.name, self.mail_address)
@@ -85,45 +81,47 @@ class UserIdentity(models.Model):
             return '<%s>' % (self.mail_address)
     class Admin:
         pass
-    
+
     class Meta:
         verbose_name = _('Identity')
         verbose_name_plural = _('Identities')
 
 class UserProfile(models.Model):
     '''User configuration options.
-    
+
     This record is automatically created on the user first login on the system.
     '''
     user = models.ForeignKey(User, unique=True)
-    
-    default_identity = models.ForeignKey(UserIdentity, unique=True, 
+
+    default_identity = models.ForeignKey(
+        UserIdentity,
+        unique=True,
         null=True )
-        
+
     sent_folder = models.TextField(max_length=128, default='INBOX')
-    
+
     def save(self):
-        super(UserProfile, self).save() 
+        super(UserProfile, self).save()
         # Create the default identity:
-        identity = UserIdentity( profile = self, 
+        identity = UserIdentity( profile = self,
             mail_address = self.user.username )
         identity.save()
-        
+
         self.default_identity = identity
-            
-        super(UserProfile, self).save() 
-        
-    
+
+        super(UserProfile, self).save()
+
+
     def __unicode__(self):
         return self.user.__unicode__()
-    
+
     class Admin:
         list_display = ('user', )
 
     class Meta:
         verbose_name = _('User profile')
         verbose_name_plural = _('User profiles')
-        
+
 class Attachments(models.Model):
     user     = models.ForeignKey(User)
     temp_file = models.TextField(max_length=128)
@@ -132,20 +130,19 @@ class Attachments(models.Model):
     size = models.IntegerField(default=0)
     sent = models.BooleanField()
     date = models.DateTimeField(auto_now_add=True)
-    
+
     def media(self):
         try:
             return self.mime_type.split('/')[0].upper()
         except:
             return 'APPLICATION'
-        
+
     def media_subtype(self):
         try:
             return self.mime_type.split('/')[1].upper()
         except:
             return 'OCTET-STREAM'
-            
+
     def delete_button(self):
-        return '<input type="submit" name="delete_%s" value="%s">' % (self.id, _('Remove'))
-
-
+        return '<input type="submit" name="delete_%s" value="%s">' % (
+            self.id, _('Remove'))

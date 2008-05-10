@@ -21,10 +21,10 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-18 13:11:56 +0100 (Fri, 18 Apr 2008) $
-# $LastChangedRevision: 322 $
+# $LastChangedDate: 2008-05-10 16:22:53 +0100 (Sat, 10 May 2008) $
+# $LastChangedRevision: 334 $
 # $LastChangedBy: helder $
-# 
+#
 
 """Authentication Forms"""
 
@@ -33,25 +33,25 @@ from django import newforms as forms
 from django.utils.translation import gettext_lazy as _
 
 # Local Imports:
-from mailapp.models import ImapServer
+from models import AuthImapServer
 
 class LoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
-        imap_server_list = [ (Xi.id,Xi.name) 
-                             for Xi in ImapServer.objects.all() ]
-    
+        imap_server_list = [ (Xi.id,Xi.name)
+                             for Xi in AuthImapServer.objects.all() ]
+
         self.fields['host'].choices = imap_server_list
-        
+
     host = forms.ChoiceField(
-        label = _('Imap Server'), 
+        label = _('Imap Server'),
         required=False,)
     username = forms.CharField(
-        label = _('Username'), 
+        label = _('Username'),
         required=False,
         max_length=30,)
     password = forms.CharField(
-        label = _('Password'), 
+        label = _('Password'),
         required=False,
         widget=forms.PasswordInput,
         max_length=40)
@@ -59,7 +59,7 @@ class LoginForm(forms.Form):
         required=False,
         widget=forms.HiddenInput,
         max_length=256)
-        
-        
-    
+
+
+
 
