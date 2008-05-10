@@ -21,9 +21,9 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-23 19:09:14 +0100 (Wed, 23 Apr 2008) $
-# $LastChangedRevision: 310M $
-# $LastChangedBy: (local) $
+# $LastChangedDate: 2008-04-27 16:37:58 +0100 (Sun, 27 Apr 2008) $
+# $LastChangedRevision: 330 $
+# $LastChangedBy: helder $
 # 
 
 # Django settings for webpymail project.

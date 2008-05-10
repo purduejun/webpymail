@@ -21,10 +21,10 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-18 13:11:56 +0100 (Fri, 18 Apr 2008) $
-# $LastChangedRevision: 322 $
+# $LastChangedDate: 2008-05-10 16:22:53 +0100 (Sat, 10 May 2008) $
+# $LastChangedRevision: 334 $
 # $LastChangedBy: helder $
-# 
+#
 
 """Authentication views to use with the IMAP auth backend
 """
@@ -37,8 +37,8 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 # Local imports:
-from webpymail.wpmauth.forms import *
-from mailapp.models import ImapServer
+from forms import LoginForm
+from models import AuthImapServer
 
 def loginView(request):
     """Login the user on the system
@@ -50,7 +50,7 @@ def loginView(request):
             password = form.cleaned_data['password']
             next = form.cleaned_data['next']
             try:
-                imap_host= ImapServer.objects.get(id=int(form.cleaned_data['host']))
+                imap_host= AuthImapServer.objects.get(id=int(form.cleaned_data['host']))
                 host = imap_host.host
                 port = imap_host.port
                 ssl  = imap_host.is_ssl
@@ -60,7 +60,7 @@ def loginView(request):
                       'error_message': _('Invalid server. '\
                           'Please try again.') })
             try:
-                user = authenticate(username=username, 
+                user = authenticate(username=username,
                     password=password, host=host, port=port, ssl=ssl)
             except ValueError:
                 return render_to_response('wpmauth/login.html',
@@ -70,7 +70,7 @@ def loginView(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    
+
                     # Not an imap user:
                     if request.session['_auth_user_backend'] == \
                      'django.contrib.auth.backends.ModelBackend':
@@ -78,7 +78,7 @@ def loginView(request):
                         { 'form': form,
                           'error_message': _('This is not an IMAP ' \
                                  'valid account. Please try again.') })
-                          
+
                     request.session['username'] = username
                     request.session['password'] = password
                     request.session['host'] = host
@@ -98,7 +98,7 @@ def loginView(request):
                       'error_message': _('Invalid login. Please ' \
                           'try again.') })
         # Invalid form:
-        else: 
+        else:
             return render_to_response('wpmauth/login.html',
                 { 'form': form })
     # Display the empty form:
@@ -111,7 +111,7 @@ def loginView(request):
         data = { 'next': next }
         form = LoginForm(data)
         return render_to_response('wpmauth/login.html',{ 'form': form })
-                
+
 def logoutView(request):
     request.session.modified = True
     logout(request)
