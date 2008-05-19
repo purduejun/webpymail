@@ -1,7 +1,7 @@
 #summary Planned feature list
 #labels Featured,Phase-Requirements
 
-= Planed feature list =
+= Planned feature list =
 
 == To be implemented first ==
 
