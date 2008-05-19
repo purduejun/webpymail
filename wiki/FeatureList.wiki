@@ -1,0 +1,61 @@
+#summary Planned feature list
+#labels Featured,Phase-Requirements
+
+= Planed feature list =
+
+== To be implemented first ==
+
+ * Same features as [http://www.squirrelmail.org squirrelmail] without plugins (more or less):
+   * Folder list: 
+     * Subscribed folders; *DONE*
+     * Expandable folder list;
+     * Read/Existing number of messsages; *DONE*
+     * Refresh folder list;
+     * Subscribe/unsubscribe;
+   * Message List:
+     * Paginated message list; *DONE*
+     * Identify the server capability and use the SORT or THREAD command, fall back to a simple view for simple servers;
+     * Move message;
+     * Mark message read;
+     * Mark message unread;
+     * Mark message deleted;
+     * Show all messages;
+   * Message view:
+     * Show the message TEXT/PLAIN part; *DONE*
+     * Show encapsulated messages; *DONE*
+     * Show attachments; *DONE*
+     * Reply, Reply All; *DONE*
+     * Forward, forward inline; *DONE*
+     * Identify URLs and render them as links - the message should be sent through a generic filter, then we could add features at will;
+   * Compose view:
+     * Compose message in plain text; *DONE*
+     * Compose message in restructured text - this should be sent through an abstract filter, then we could add filters at will;
+     * Add attachments; *DONE*
+     * Save message (as draft);
+   * Address book:
+     * Auto save new mail addresses;
+     * LDAP access (read);
+     * LDAP access (write);
+
+----
+
+ * Other features:
+   * Multi server support; *DONE*
+   * IMAP authentication back end: 
+     * Server list edited using the admin app; *DONE*
+     * Auto user creation if successfully authenticated by the IMAP server; *DONE*
+     * Authenticates always against the server, so no passwords on the db; *DONE*
+   * BODYSTRUCTURE parser; *DONE*
+
+==  Possible features ==
+
+ * SOHO features:
+   * System wide signatures, enforceable by the webmaster;
+   * Ability to disable user signatures;
+   * Common pool of harvested mail addresses from all the acounts, if the user chooses to make the address public every user will have access to the mail address;
+   * Support for LDAP address books (read and write);
+   * Support for IMAP ACLs, so that a user can give access to his folders;
+   * Message templates;
+   * Allow or disallow message templates for the user;
+   * Force a message template to a user;
+   * Database index of messages with the ENVELOPE and BODYSTRUCTURE info;
