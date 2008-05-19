@@ -37,8 +37,6 @@
      * LDAP access (read);
      * LDAP access (write);
 
-----
-
  * Other features:
    * Multi server support; *DONE*
    * IMAP authentication back end: 
