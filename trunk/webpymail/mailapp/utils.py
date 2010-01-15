@@ -21,16 +21,32 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-12 19:06:06 +0100 (Sat, 12 Apr 2008) $
-# $LastChangedRevision: 308 $
-# $LastChangedBy: helder $
-# 
+# $Id$
+#
 
 """Utility functions
 """
 
-# Imports:
+# Imports
+
+# Sys
+import time
 import textwrap
+
+# Django
+from django.conf import settings
+
+# Mail
+from email import encoders
+from email.mime.text import MIMEText
+from email.mime.audio import MIMEAudio
+from email.mime.base import MIMEBase
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
+from email.mime.message import MIMEMessage
+from email import message_from_file
+
+from smtplib import SMTPRecipientsRefused, SMTPException, SMTP
 
 # Mail
 from hlimap import ImapServer
@@ -39,21 +55,21 @@ def serverLogin( request ):
     """Login to the server
     """
     # Login to the server:
-    M = ImapServer(host=request.session['host'],port=request.session['port'], 
+    M = ImapServer(host=request.session['host'],port=request.session['port'],
         ssl= request.session['ssl'])
-    
+
     try:
-        M.login(request.session['username'], 
+        M.login(request.session['username'],
             request.session['password'])
         return M
     except:
         raise Http404
-        
+
 def join_address_list( addr_list ):
     '''Returns a comma separated list of mail addresses.
-    
+
     @param addr_list: a list of addresses on the form [ ("name","email"), ... ]
-    
+
     @return: comma separated list of addresses on a string.
     '''
     if not addr_list:
@@ -61,15 +77,15 @@ def join_address_list( addr_list ):
     addrs = []
     for addr in addr_list:
         addrs.append( mail_addr_str(addr) )
-    
+
     return ','.join(addrs)
-        
+
 def mail_addr_str( mail_addr ):
     '''String representation of a mail address.
-    
+
     @param mail_addr: a tuple in the form ("Name", "email address")
-    
-    @return: '"Name" <email address>' or only '<email address>' if there is no 
+
+    @return: '"Name" <email address>' or only '<email address>' if there is no
         name.
     '''
     if mail_addr[0]:
@@ -79,21 +95,21 @@ def mail_addr_str( mail_addr ):
 
 def mail_addr_name_str( mail_addr ):
     '''String representation of the person name in a mail address.
-    
+
     @param mail_addr: a tuple in the form ("Name", "email address")
-    
+
     @return: '"Name"' or '<email address>' if there is no name.
     '''
     if mail_addr[0]:
         return '%s' % ( mail_addr[0])
     else:
         return '<%s>' % ( mail_addr[1] )
-        
+
 def quote_wrap_lines(text, quote_char = '>', width = 60):
     '''Wraps and quotes a message text.split
-    
+
     @param text: text of the message
-    @param quote_char: que character to be appended on eaxh line (without extra 
+    @param quote_char: que character to be appended on eaxh line (without extra
         spaces)
     @param width: number of columns the text should have counting the quote_char
 
@@ -102,7 +118,7 @@ def quote_wrap_lines(text, quote_char = '>', width = 60):
     ln_list = text.split('\n')
     quote_char = '%s ' % quote_char
     width = width - len(quote_char)
-    
+
     new_list = []
     for ln in ln_list:
         if len(ln) > width:
@@ -112,11 +128,11 @@ def quote_wrap_lines(text, quote_char = '>', width = 60):
             new_list.append('%s %s' % (quote_char, ln))
 
     return '\n'.join(new_list)
-    
+
 def show_addrs( label, addr_list, default ):
     '''Returns a text representation of the address list.
     '''
-    txt = '%s: ' % label 
+    txt = '%s: ' % label
     if addr_list:
         for addr in addr_list:
             txt += '%s, ' % mail_addr_str(addr)
@@ -126,6 +142,101 @@ def show_addrs( label, addr_list, default ):
             txt += '%s\n' % default
         else:
             return ''
-        
+
     return txt
-    
+
+##
+## Compose and send messages
+##
+
+def compose_rfc822( from_addr, to_addr, cc_addr, bcc_addr,
+                subject, message_text, message_html, attachment_list = [] ):
+    '''
+    Returns a rfc822 compliant message
+    '''
+
+    # Create the message text:
+    msg_text = MIMEText(message_text, _charset='utf-8')
+
+    # Include the attachments:
+    if attachment_list.file_list:
+        msg = MIMEMultipart('MIXED')
+        msg.attach(msg_text)
+        for attachment in attachment_list.file_list:
+            filename = attachment.temp_file
+            if attachment.media() == 'TEXT':
+                fp = open(filename)
+                # Note: we should handle calculating the charset
+                attach = MIMEText(fp.read(), _subtype=attachment.media_subtype(),
+                    _charset='utf-8')
+                fp.close()
+            elif attachment.media() == 'IMAGE':
+                fp = open(filename, 'rb')
+                attach = MIMEImage(fp.read(), _subtype=attachment.media_subtype())
+                fp.close()
+            elif attachment.media() == 'AUDIO':
+                fp = open(filename, 'rb')
+                attach = MIMEAudio(fp.read(), _subtype=attachment.media_subtype())
+                fp.close()
+            elif (attachment.media() == 'MESSAGE' and
+                    attachment.media_subtype() == 'RFC822'):
+                fp = open(filename, 'rb')
+                attach =  MIMEMessage( message_from_file(fp) , 'RFC822' )
+                fp.close()
+            else:
+                fp = open(filename, 'rb')
+                attach = MIMEBase(attachment.media(), attachment.media_subtype())
+                attach.set_payload(fp.read())
+                fp.close()
+
+                # Encode the payload using Base64
+                encoders.encode_base64(attach)
+
+            # Set the filename parameter
+            attach.set_param('name',attachment.filename)
+            attach.add_header('Content-Disposition', 'attachment',
+                filename=attachment.filename)
+
+            msg.attach(attach)
+    else:
+        msg = msg_text
+
+    if subject:
+        msg['Subject'] = subject
+    if from_addr:
+        msg['From'] = from_addr
+    if to_addr:
+        msg['To'] = to_addr
+    if cc_addr:
+        msg['Cc'] = cc_addr
+    if bcc_addr:
+        msg['Bcc'] = bcc_addr
+
+    msg['Date'] = (time.strftime('%a, %d %b %Y %H:%M:%S ', time.localtime()) +
+                    '%+05d' % time.timezone)
+    msg['X-Mailer'] = 'WebPyMail %s' % settings.WEBPYMAIL_VERSION
+
+    return msg
+
+def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None ):
+    '''
+    Sends a message to a smtp server
+    '''
+    s = SMTP(smtp_host, smtp_port)
+
+    if user:
+        s.login( user, passwd)
+
+    to_addr_list = []
+
+    if message['To']:
+        to_addr_list.append(message['To'])
+    if message['Cc']:
+        to_addr_list.append(message['Cc'])
+    if message['Bcc']:
+        to_addr_list.append(message['Bcc'])
+
+    to_addr_list = ','.join(to_addr_list).split(',')
+
+    s.sendmail(message['From'], to_addr_list, message.as_string())
+    s.close()

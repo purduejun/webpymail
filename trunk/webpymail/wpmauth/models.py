@@ -19,6 +19,9 @@
 ## along with WebPyMail.  If not, see <http://www.gnu.org/licenses/>.
 
 # Helder Guerreiro <helder@paxjulia.com>
+#
+# $Id$
+#
 
 # Imports
 

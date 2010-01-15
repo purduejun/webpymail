@@ -21,9 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-05-10 16:22:53 +0100 (Sat, 10 May 2008) $
-# $LastChangedRevision: 334 $
-# $LastChangedBy: helder $
+# $Id$
 #
 
 """Authentication views to use with the IMAP auth backend
@@ -38,7 +36,7 @@ from django.conf import settings
 
 # Local imports:
 from forms import LoginForm
-from models import AuthImapServer
+from utils import server_config
 
 def loginView(request):
     """Login the user on the system
@@ -50,10 +48,11 @@ def loginView(request):
             password = form.cleaned_data['password']
             next = form.cleaned_data['next']
             try:
-                imap_host= AuthImapServer.objects.get(id=int(form.cleaned_data['host']))
-                host = imap_host.host
-                port = imap_host.port
-                ssl  = imap_host.is_ssl
+                server = form.cleaned_data['host']
+                config = server_config()
+                host = config.get( server, 'host' )
+                port = config.getint( server, 'port' )
+                ssl  = config.getboolean( server, 'ssl' )
             except:
                 return render_to_response('wpmauth/login.html',
                     { 'form': form,
@@ -72,11 +71,11 @@ def loginView(request):
                     login(request, user)
 
                     # Not an imap user:
-                    if request.session['_auth_user_backend'] == \
-                     'django.contrib.auth.backends.ModelBackend':
+                    if (request.session['_auth_user_backend'] == 
+                     'django.contrib.auth.backends.ModelBackend'):
                         return render_to_response('wpmauth/login.html',
                         { 'form': form,
-                          'error_message': _('This is not an IMAP ' \
+                          'error_message': _('This is not an IMAP ' 
                                  'valid account. Please try again.') })
 
                     request.session['username'] = username

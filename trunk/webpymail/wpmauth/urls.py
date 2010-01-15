@@ -21,16 +21,14 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-09 21:26:21 +0100 (Wed, 09 Apr 2008) $
-# $LastChangedRevision: 301 $
-# $LastChangedBy: helder $
-# 
+# $Id$
+#
 
 from django.conf.urls.defaults import patterns, url
 
 """Authentication interface"""
 
-urlpatterns = patterns('webpymail.wpmauth.views',   
+urlpatterns = patterns('webpymail.wpmauth.views',
     url(r'^login/$', 'loginView', name='login'),
     url(r'^logout/$', 'logoutView', name='logout'),
     )

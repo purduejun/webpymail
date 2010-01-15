@@ -21,19 +21,17 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-18 11:48:25 +0100 (Fri, 18 Apr 2008) $
-# $LastChangedRevision: 321 $
-# $LastChangedBy: helder $
-# 
+# $Id$
+#
 
 '''Forms used on the mailapp application
 '''
 
 # Imports
 
-from django import newforms as forms
+from django import forms
 from django.utils.translation import gettext_lazy as _
-from django.newforms.widgets import Input
+from django.forms.widgets import Input
 from django.conf import settings
 
 import re
@@ -42,11 +40,11 @@ from multifile import *
 
 # Mail form exceptions
 
-class MAILFORMERROR ( Exception ): 
+class MAILFORMERROR ( Exception ):
     pass
 
 # Custom Fields
-                      
+
 # Regular expressions:
 
 single_mail_address = r'([_a-zA-Z0-9-]+(?:\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+' +\
@@ -100,7 +98,7 @@ class MultiEmailField(forms.Field):
                 len(emails)- settings.MAXADDRESSES))
 
         return emails
-  
+
 class MultyChecksum(forms.Field):
     '''Field used to hold a list checksums of the uploaded files
     '''
@@ -109,31 +107,31 @@ class MultyChecksum(forms.Field):
     def clean(self, value):
         # FIXME: Lacking validation here
         return value.split(',')
-        
-    
-    
+
+
+
 # Forms
 
 class ComposeMailForm(forms.Form):
     def __init__(self, *args, **kwargs):
         profile = kwargs.pop('user_profile')
         super(ComposeMailForm, self).__init__(*args, **kwargs)
-        
+
         # Populate the identity choices
-        from_list = [ ( profile.default_identity, 
+        from_list = [ ( profile.default_identity,
                         profile.default_identity ) ]
         for identity in profile.useridentity_set.all():
             if identity != profile.default_identity:
                 from_list += [ (identity, identity ) ]
         self.fields['from_addr'].choices = from_list
-        
-    from_addr    = forms.ChoiceField( 
+
+    from_addr    = forms.ChoiceField(
         label = _('From'),
         help_text = "<div class=\"helptext\">%s</div>" % \
             _('Your email address'),
         required=True
         )
-        
+
     to_addr      = MultiEmailField(
         label = _('To'),
         help_text = "<div class=\"helptext\">%s</div>" % \
@@ -141,45 +139,52 @@ class ComposeMailForm(forms.Form):
         widget=forms.TextInput( attrs={'size':settings.SINGLELINELEN }),
         required=True
         )
-        
+
     cc_addr      = MultiEmailField(
-        label = _('Cc'), 
+        label = _('Cc'),
         help_text= "<div class=\"helptext\">%s</div>" % \
-        _('Carbon Copy addresses, separated by commas'), 
+        _('Carbon Copy addresses, separated by commas'),
         widget=forms.TextInput( attrs={'size':settings.SINGLELINELEN }),
         required=False
         )
-        
+
     bcc_addr     = MultiEmailField(
         label = _('Bcc'),
         help_text= "<div class=\"helptext\">%s</div>" % \
         _('Blind Carbon Copy addresses, separated by commas'),
         widget=forms.TextInput( attrs={'size':settings.SINGLELINELEN }),
-        required=False 
+        required=False
         )
-    
-    filter       = forms.ChoiceField( 
+
+    filter       = forms.ChoiceField(
         choices = ((1,_('Plain')),(2,_('reST'))),
         label = _('Filter'), )
-        
+
     subject      = forms.CharField(
         max_length=100,
         label = _('Subject'),
         widget=forms.TextInput( attrs={'size':settings.SINGLELINELEN }),
         required=False)
-        
+
     message_text = forms.CharField(
         label = _('Message Text'),
-        widget=forms.Textarea( attrs={'rows':settings.TEXTAREAROWS, 
+        widget=forms.Textarea( attrs={'rows':settings.TEXTAREAROWS,
                                       'cols':settings.TEXTAREACOLS}),
         required=False)
-        
-    attachment = MultiFileField( 
-        label = _('Attachment'), 
+
+    attachment = MultiFileField(
+        label = _('Attachment'),
         required=False,
         count = 1 )
-        
-    saved_files = MultyChecksum( required = False, widget = forms.HiddenInput())
-    
-    
 
+    saved_files = MultyChecksum( required = False, widget = forms.HiddenInput())
+
+class MessageActionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        message_list = kwargs.pop('message_list')
+        super(MessageActionForm, self).__init__(*args, **kwargs)
+
+        # Populate the identity choices
+        self.fields['messages'].choices = message_list
+
+    messages = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)

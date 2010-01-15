@@ -211,6 +211,8 @@ def shrink_fetch_list( msg_list ):
     '''
     tmp = []
     msg_list = list(msg_list)
+    if not msg_list: return []
+    
     msg_list.sort()
     last = msg_list[0]
     anchor = 0

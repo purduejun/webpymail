@@ -21,25 +21,23 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-05-10 16:22:53 +0100 (Sat, 10 May 2008) $
-# $LastChangedRevision: 334 $
-# $LastChangedBy: helder $
+# $Id$
 #
 
 """Authentication Forms"""
 
 # Global imports:
-from django import newforms as forms
+from django import forms
 from django.utils.translation import gettext_lazy as _
 
 # Local Imports:
-from models import AuthImapServer
+from utils import server_list
 
 class LoginForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
-        imap_server_list = [ (Xi.id,Xi.name)
-                             for Xi in AuthImapServer.objects.all() ]
+        imap_server_list = [ (s['label'], s['name'] )
+                             for s in server_list() ]
 
         self.fields['host'].choices = imap_server_list
 

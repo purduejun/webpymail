@@ -21,39 +21,17 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id$
-#
+# $Id: __init__.py 364 2008-06-16 11:46:37Z helder $
 
-"""Base URL definitions
+"""
+Assorted uncategorized functions
 """
 
-# Global imports:
-from django.conf.urls.defaults import patterns, include, url
-from django.contrib import admin
-
-admin.autodiscover()
-
-urlpatterns = patterns('',
-    # Root:
-    (r'^$','webpymail.mailapp.message_views.index'),
-
-    # Mail Interface:
-    (r'^mail/', include('webpymail.mailapp.mail_urls')),
-
-    # Authentication interface:
-    (r'^auth/', include('webpymail.wpmauth.urls')),
-
-    # Admin Interface:
-    (r'^admin/(.*)', admin.site.root),
-
-    # Generic:
-    url(r'^not_implemented/$', 'webpymail.mailapp.message_views.not_implemented',
-        name='not_implemented'),
-)
-
-urlpatterns += patterns('',
-    # DEVELOPMENT
-    # The site wide media folder:
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
-     {'document_root': 'media/'}),
-)
+def cmp_dict( key ):
+    '''
+    Returns a comparation function (similar to 'cmp') for dictionary lists.
+    '''
+    def cmpd( a, b ):
+        print key
+        return cmp( a[key], b[key] )
+    return cmpd

@@ -21,10 +21,8 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-14 23:35:49 +0100 (Mon, 14 Apr 2008) $
-# $LastChangedRevision: 313 $
-# $LastChangedBy: helder $
-# 
+# $Id$
+#
 
 from django import template
 from django.template import resolve_variable
@@ -51,13 +49,13 @@ def do_part_text(parser, token):
     if not (media_subtype[0] == media_subtype[-1] and media_subtype[0] in ('"', "'")):
         raise template.TemplateSyntaxError, \
             "%r tag's media_subtype argument should be in quotes" % tag_name
-            
+
     return PartTextNode(message, part, media_subtype[1:-1])
 
 def make_links( match ):
     url = match.groups()[0]
     return '<a href="%s">\n%s</a>' % (url, url)
-   
+
 def wrap_lines(text, colnum = 72):
     ln_list = text.split('\n')
     new_list = []
@@ -73,14 +71,14 @@ class PartTextNode(template.Node):
         self.media_subtype = media_subtype.upper()
         self.message = message
         self.part = part
-        
+
     def render(self, context):
         message =  resolve_variable(self.message, context)
         part = resolve_variable(self.part, context)
-        
+
         text = message.part( part )
         text = html_url_re.sub( make_links, text)
         if part.media == 'TEXT' and part.media_subtype == 'PLAIN':
             text = wrap_lines( text, 80 )
-        
+
         return text
