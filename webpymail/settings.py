@@ -21,10 +21,10 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-27 16:37:58 +0100 (Sun, 27 Apr 2008) $
-# $LastChangedRevision: 330 $
-# $LastChangedBy: helder $
-# 
+# $Id$
+#
+
+import os.path
 
 # Django settings for webpymail project.
 
@@ -32,15 +32,15 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('SysAdn', 'sysadm@example.com'),
+    ('SysAdm', 'sysadm@example.com'),
 )
 MANAGERS = ADMINS
 
-# Local time zone for this installation. 
+# Local time zone for this installation.
 # Choices can be found here:
 #  http://www.postgresql.org/docs/8.1/static/datetime-keywords.html
 # although not all variations may be possible on all operating systems.
-# If running in a Windows environment this must be set to the same as 
+# If running in a Windows environment this must be set to the same as
 # your system time zone.
 TIME_ZONE = 'WEST'
 
@@ -95,11 +95,10 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
-    
+
     # WebPyMail apps
     'webpymail.wpmauth',
     'webpymail.mailapp',
-    'webpymail.settingsapp',
 )
 
 ######################
@@ -114,7 +113,7 @@ DEFAULT_FOLDER = 'INBOX'
 
 # Database Setup:
 
-DATABASE_ENGINE = 'sqlite3'      # 'postgresql_psycopg2', 'postgresql', 
+DATABASE_ENGINE = 'sqlite3'      # 'postgresql_psycopg2', 'postgresql',
                                  # 'mysql',         'sqlite3' or 'ado_mssql'.
 DATABASE_NAME = './webpymail.db' # Or path to database file if using sqlite3.
 DATABASE_USER = ''               # Not used with sqlite3.
@@ -152,7 +151,7 @@ LOGIN_SUCCESS = '/mail/'
 MESSAGES_PAGE = 50 # Number of messages per page to display
 
 # Mail compose form
-MAXADDRESSES = 50   # Maximum number of mails that can be used on a To, Cc or 
+MAXADDRESSES = 50   # Maximum number of mails that can be used on a To, Cc or
                     # Bcc field.
 SINGLELINELEN = 60
 TEXTAREAROWS = 15
@@ -160,15 +159,25 @@ TEXTAREACOLS = 60
 
 # SMTP SETTINGS
 
-SMTPHOST = 'example.com'
+SMTPHOST = 'smtpserver'
 SMTPPORT = 25
-SMTPUSER = None
-SMTPPASS = None
+SMTPUSER = None # TODO: auth smtp
+SMTPPASS = None # TODO: auth smtp
 
 # Attachments
 
-# TODO: Check if the following dir exists, if not raise an exception
-TEMPDIR = '/tmp/webpymail' # Temporary dir to store the attachements
+TEMPDIR = '/tmp' # Temporary dir to store the attachements
+
+# User configuration dir:
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+
+CONFIGDIR = os.path.join(BASEDIR,'config')
+USERCONFDIR = os.path.join(CONFIGDIR, 'users')
+SERVERCONFDIR = os.path.join(CONFIGDIR, 'servers')
+FACTORYCONF = os.path.join(CONFIGDIR,'factory.conf')
+DEFAULTCONF = os.path.join(CONFIGDIR,'default.conf')
+SERVERCONF  = os.path.join(CONFIGDIR,'servers.conf')
+SYSTEMCONF  = os.path.join(CONFIGDIR,'system.conf')
 
 ###############################################
 # Do not change anything beyond this point... #

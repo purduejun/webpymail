@@ -21,9 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-05-10 16:22:53 +0100 (Sat, 10 May 2008) $
-# $LastChangedRevision: 334 $
-# $LastChangedBy: helder $
+# $Id$
 #
 
 '''Model file for the mailapp'''
@@ -98,7 +96,7 @@ class UserProfile(models.Model):
         unique=True,
         null=True )
 
-    sent_folder = models.TextField(max_length=128, default='INBOX')
+    ###sent_folder = models.TextField(max_length=128, default='INBOX')
 
     def save(self):
         super(UserProfile, self).save()
@@ -121,6 +119,13 @@ class UserProfile(models.Model):
     class Meta:
         verbose_name = _('User profile')
         verbose_name_plural = _('User profiles')
+
+class FoldersToExpand(models.Model):
+    '''List of folders to expand. This table is managed from
+    folder_views.py
+    '''
+    user = models.ForeignKey(User)
+    folder_name = models.TextField(max_length=512)
 
 class Attachments(models.Model):
     user     = models.ForeignKey(User)

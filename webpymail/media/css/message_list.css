@@ -40,6 +40,10 @@ div.not_seen { font-weight: bold;
     font-size: small;}
 div.seen { font-size: small; }
 
+div.deleted { 
+    text-decoration: line-through; 
+    font-size: small; }
+
 div.number { text-align:right; }
 
 div.filter_list { 

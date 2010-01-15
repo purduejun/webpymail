@@ -519,7 +519,7 @@ class IMAP4P:
 
     def capability(self):
         '''Fetch capabilities list from server.
-        updates self.sstatus['capability']'''
+        updates self.sstatus["capability"]'''
 
         name = 'CAPABILITY'
 
@@ -539,7 +539,7 @@ class IMAP4P:
         also.
 
         Deleted messages are removed from writable mailbox.
-        This is the recommended command before 'LOGOUT'.'''
+        This is the recommended command before "LOGOUT".'''
 
         name = 'CLOSE'
 
@@ -601,6 +601,7 @@ class IMAP4P:
 
     def _fetch(self, uid, message_list, message_parts='(FLAGS)' ):
         '''Fetch (parts of) messages'''
+        
         if uid:
             process_command = self.processCommandUID
         else:
@@ -617,6 +618,9 @@ class IMAP4P:
         # fetch.
         if isinstance(message_list, list) or \
            isinstance(message_list, tuple):
+            if not message_list:
+                raise self.Error('Can\'t fetch an empty message list.')
+            
             shrinked_list = shrink_fetch_list( message_list )
             message_list = ','.join( '%s' % Xi for Xi in shrinked_list )
 
@@ -657,7 +661,11 @@ class IMAP4P:
 
                 self.sstatus['fetch_response'] = result
                 return result
-
+        elif isinstance(message_list, str):
+            message_list = message_list.strip()
+            
+        if not message_list:
+            raise Error('Can\'t fetch an empty message list.')
         args = '%s %s' % (message_list,  message_parts)
         return process_command(name, args)['fetch_response']
 

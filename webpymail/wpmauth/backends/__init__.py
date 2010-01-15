@@ -21,9 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $LastChangedDate: 2008-04-09 21:26:21 +0100 (Wed, 09 Apr 2008) $
-# $LastChangedRevision: 301 $
-# $LastChangedBy: helder $
-# 
+# $Id$
+#
 
 from imapbackend import ImapBackend

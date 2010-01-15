@@ -16,7 +16,6 @@
 {% block contents %}
 <div id="sub_menu">
     <div id="sub_menu_right">
-        <a href="{% url not_implemented %}">{% trans "Delete" %}</a>
     </div>
     <a href="{% url mailapp_reply_message folder=message.folder.url,uid=message.uid %}">{% trans "Reply" %}</a>&nbsp;&nbsp;
     <a href="{% url mailapp_reply_all_message folder=message.folder.url,uid=message.uid %}">{% trans "Reply All" %}</a>&nbsp;&nbsp;
@@ -29,6 +28,7 @@
 
 <div class="message">
 <div class="subject">
+{% if message.deleted %}{% trans "MESSAGE MARKED DELETED! -" %}{% endif %}
 {% if message.envelope.env_subject %}{{ message.envelope.env_subject }}{% else %}{% trans "(No subject)" %}{% endif %}
 </div>
 <div class="fields">
@@ -41,7 +41,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if message.envelope.env_to %}
     <tr>
     <th>{% trans "To:" %}</th>
@@ -50,7 +50,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if message.envelope.env_cc %}
     <tr>
     <th>{% trans "Cc:" %}</th>
@@ -59,7 +59,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if message.envelope.env_bcc %}
     <tr>
     <th>{% trans "Cc:" %}</th>
@@ -68,7 +68,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if message.envelope.env_date %}
     <tr>
     <th>{% trans "Date:" %}</th>
@@ -87,12 +87,12 @@
         {% if part.test_html %}
         <div class="attach_link">
             <a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">
-            {% trans "View HTML message" %}</a> - 
+            {% trans "View HTML message" %}</a> -
             {% trans "Please note that viewing html messages may pose a security risk." %}
         </div>
         {% endif %}
     {% endif %}
-    
+
     {% if part.is_encapsulated %}
         {% if part.is_start %}
 <div class="enc_message">
@@ -110,7 +110,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if part.envelope.env_to %}
     <tr>
     <th>{% trans "To:" %}</th>
@@ -119,7 +119,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if part.envelope.env_cc %}
     <tr>
     <th>{% trans "Cc:" %}</th>
@@ -128,7 +128,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if part.envelope.env_bcc %}
     <tr>
     <th>{% trans "Cc:" %}</th>
@@ -137,7 +137,7 @@
     {% endfor %}</td>
     </tr>
     {% endif %}
-    
+
     {% if part.envelope.env_date %}
     <tr>
     <th>{% trans "Date:" %}</th>
@@ -152,7 +152,7 @@
 </div>
         {% endif %}
     {% endif %} {# End of embeded message #}
-           
+
     {% if part.is_attachment %}
 <div class="attach_link">
 <table>
@@ -174,7 +174,7 @@
     </tr>
     <tr>
         <th colspan=2><!-- TODO: {# {% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %} #}-->
-<a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">{% trans "Download" %}</a></th>        
+<a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">{% trans "Download" %}</a></th>
     </tr>
 </table>
 </div>
@@ -185,6 +185,14 @@
 </div>
 <div class="message_info">
 <p><a href="{% url mailapp_message_header folder=message.folder.url,uid=message.uid %}">{% trans "Message Header" %}</a>|
-<a href="{% url mailapp_message_structure folder=message.folder.url,uid=message.uid %}">{% trans "Message Structure" %}</a>
+<a href="{% url mailapp_message_structure folder=message.folder.url,uid=message.uid %}">{% trans "Message Structure" %}</a></p>
 </div>
+
+<form method="post" action="{% url mailapp-message folder=message.folder.url,uid=message.uid %}">
+    {% if message.deleted %}
+        <input type="submit" name="undelete" value="{% trans "Undelete" %}" />
+    {% else %}
+        <input type="submit" name="delete" value="{% trans "Delete" %}" />
+    {% endif %}
+</form>
 {% endblock %}

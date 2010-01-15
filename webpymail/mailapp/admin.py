@@ -21,39 +21,16 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id$
+# $Id: admin.py 433 2008-12-04 17:50:10Z helder $
 #
 
-"""Base URL definitions
+"""Django administrative interface
 """
 
-# Global imports:
-from django.conf.urls.defaults import patterns, include, url
+# Imports:
+# Django
 from django.contrib import admin
+from webpymail.mailapp.models import UserIdentity, UserProfile
 
-admin.autodiscover()
-
-urlpatterns = patterns('',
-    # Root:
-    (r'^$','webpymail.mailapp.message_views.index'),
-
-    # Mail Interface:
-    (r'^mail/', include('webpymail.mailapp.mail_urls')),
-
-    # Authentication interface:
-    (r'^auth/', include('webpymail.wpmauth.urls')),
-
-    # Admin Interface:
-    (r'^admin/(.*)', admin.site.root),
-
-    # Generic:
-    url(r'^not_implemented/$', 'webpymail.mailapp.message_views.not_implemented',
-        name='not_implemented'),
-)
-
-urlpatterns += patterns('',
-    # DEVELOPMENT
-    # The site wide media folder:
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
-     {'document_root': 'media/'}),
-)
+admin.site.register(UserIdentity)
+admin.site.register(UserProfile)
