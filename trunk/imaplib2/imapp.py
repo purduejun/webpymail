@@ -170,6 +170,7 @@ class IMAP4P:
         self.welcome = self.__IMAP4.welcome
         self.send_command = self.__IMAP4.send_command
         self.state = self.__IMAP4.state
+        self.shutdown = self.__IMAP4.shutdown
 
         # Server status
         self.sstatus = {}
@@ -349,7 +350,7 @@ class IMAP4P:
         resp = scan_sexp( args )
 
         try:
-            attributes =  resp[0] 
+            attributes =  resp[0]
             hierarchy_delimiter = resp[1]
             name = resp[2]
         except:
@@ -601,7 +602,7 @@ class IMAP4P:
 
     def _fetch(self, uid, message_list, message_parts='(FLAGS)' ):
         '''Fetch (parts of) messages'''
-        
+
         if uid:
             process_command = self.processCommandUID
         else:
@@ -620,7 +621,7 @@ class IMAP4P:
            isinstance(message_list, tuple):
             if not message_list:
                 raise self.Error('Can\'t fetch an empty message list.')
-            
+
             shrinked_list = shrink_fetch_list( message_list )
             message_list = ','.join( '%s' % Xi for Xi in shrinked_list )
 
@@ -663,7 +664,7 @@ class IMAP4P:
                 return result
         elif isinstance(message_list, str):
             message_list = message_list.strip()
-            
+
         if not message_list:
             raise Error('Can\'t fetch an empty message list.')
         args = '%s %s' % (message_list,  message_parts)
