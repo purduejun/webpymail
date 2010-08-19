@@ -59,11 +59,11 @@ class ImapBackend:
 
         if valid:
             try:
-                user = User.objects.get(username='%s@%s' % (username,host))
+                user = User.objects.get(username=('%s@%s' % (username,host))[:30])
             except User.DoesNotExist:
                 # Create a new user
                 password = generatePassword()
-                user = User(username='%s@%s' % (username,host),
+                user = User(username=('%s@%s' % (username,host))[:30],
                     password=password)
                 user.is_staff = False
                 user.is_superuser = False
