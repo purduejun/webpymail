@@ -5,6 +5,8 @@
 
 == To be implemented first ==
 
+Besides the feature list bellow we want also to make this application pluggable in the same way the django.contrib.comments is.
+
  * Same features as [http://www.squirrelmail.org squirrelmail] without plugins (more or less):
    * Folder list: 
      * Subscribed folders; *DONE*
@@ -15,10 +17,10 @@
    * Message List:
      * Paginated message list; *DONE*
      * Identify the server capability and use the SORT or THREAD command, fall back to a simple view for simple servers;
-     * Move message;
-     * Mark message read;
-     * Mark message unread;
-     * Mark message deleted;
+     * Move message; 
+     * Mark message read; *DONE*
+     * Mark message unread; *DONE*
+     * Mark message deleted; DONE*
      * Show all messages;
    * Message view:
      * Show the message TEXT/PLAIN part; *DONE*
@@ -26,10 +28,10 @@
      * Show attachments; *DONE*
      * Reply, Reply All; *DONE*
      * Forward, forward inline; *DONE*
-     * Identify URLs and render them as links - the message should be sent through a generic filter, then we could add features at will;
+     * Identify URLs and render them as links *DONE* - the message should be sent through a generic filter, then we could add features at will;
    * Compose view:
      * Compose message in plain text; *DONE*
-     * Compose message in restructured text - this should be sent through an abstract filter, then we could add filters at will;
+     * Compose message in restructured text;
      * Add attachments; *DONE*
      * Save message (as draft);
    * Address book:
