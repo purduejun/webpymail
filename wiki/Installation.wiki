@@ -37,6 +37,17 @@ SMTPHOST = 'your smtp server'
 
 Please note that, for the moment, no auth is supported on the smtp server.
 
+  * Edit the file servers.conf in webpymail/config/servers.conf and add your server. Please note that right now the Google IMAP is not working (they don't support server side threading and sorting and we still don't do that on the client side). A server entry must be something like:
+
+{{{
+[macavity]
+
+name = Macavity
+host = paxjulia.com
+port = 993
+ssl  = true
+}}}
+
   * Create the temporary directory to store the attachments while composing a message, by default:
 
 {{{
@@ -62,7 +73,7 @@ Superuser created successfully.
 [... snip ...]
 }}}
 
-You must create a superuser, this user will be needed to configure the IMAP servers.
+You must create a superuser.
 
   * Start the Django included web server:
 
@@ -70,6 +81,4 @@ You must create a superuser, this user will be needed to configure the IMAP serv
 $ python manage.py runserver
 }}}
 
-  * Now you need to configure the IMAP server(s) to use. Go to http://127.0.0.1:8000/admin login with the user you've created and add an IMAP server. Logout.
-
-  * Finally you can access the webmail app, just go to: http://127.0.0.1:8000/mail/ . Login with a valid user on the IMAP server.
+  * Finally you can access the webmail app, just go to: http://127.0.0.1:8000/ . Login with a valid user on the IMAP server.
