@@ -87,7 +87,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'webpymail.urls'
 
-TEMPLATE_DIRS = ( 'templates' )
+CURDIR = os.path.dirname(__file__)
+TEMPLATE_DIRS = ( os.path.join(CURDIR, 'templates').replace('\\', '/'), )
 
 INSTALLED_APPS = (
     # Django apps
