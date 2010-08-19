@@ -362,9 +362,9 @@ class Folder(object):
     def __unicode__(self):
         mailbox = self.name
         try:
-            return unicode(mailbox.replace('+','+-').replace('&','+'),'utf-7')
+            return unicode(mailbox.replace('+','+-').replace('&','+').replace(',','/'),'utf-7')
         except UnicodeDecodeError:
-            return unicode(mailbox.replace('+','+-').replace('&','+'),'utf-8')
+            return unicode(mailbox.replace('+','+-').replace('&','+').replace(',','/'),'utf-8')
 
     def __repr__(self):
         return '<Folder instance "%s">' % (self.name)
