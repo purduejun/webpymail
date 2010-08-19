@@ -59,7 +59,7 @@ def loginView(request):
                       'error_message': _('Invalid server. '\
                           'Please try again.') })
             try:
-                user = authenticate(username=username,
+                user = authenticate(username=username[:30],
                     password=password, host=host, port=port, ssl=ssl)
             except ValueError:
                 return render_to_response('wpmauth/login.html',
