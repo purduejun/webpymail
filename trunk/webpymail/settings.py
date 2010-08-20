@@ -185,3 +185,12 @@ SYSTEMCONF  = os.path.join(CONFIGDIR,'system.conf')
 ###############################################
 
 WEBPYMAIL_VERSION = 'SVN'
+
+##
+## LOCAL SETTINGS
+##
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
