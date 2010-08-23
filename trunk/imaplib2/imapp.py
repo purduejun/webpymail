@@ -171,6 +171,7 @@ class IMAP4P:
         self.send_command = self.__IMAP4.send_command
         self.state = self.__IMAP4.state
         self.shutdown = self.__IMAP4.shutdown
+        self.push_continuation = self.__IMAP4.push_continuation
 
         # Server status
         self.sstatus = {}
@@ -511,12 +512,21 @@ class IMAP4P:
         name = 'AUTHENTICATE'
 
         try:
-            for obj in authobject:
-                self.push_continuation( obj )
+            if isinstance(authobject, str):
+                self.push_continuation( authobject )
+            else:
+                for obj in authobject:
+                    self.push_continuation( obj )
         except:
             self.push_continuation(authobject)
 
-        return self.processCommand( name, mech )
+        try:
+            self.processCommand( name, mech )
+            self.state = 'AUTH'
+        except:
+            raise self.Error('Could not login.')
+
+        return self.sstatus
 
     def capability(self):
         '''Fetch capabilities list from server.
@@ -740,6 +750,22 @@ class IMAP4P:
         """
         self.user, self.password = user, password
         return self.authenticate('CRAM-MD5', self._CRAM_MD5_AUTH)
+
+    def login_auth(self, user, password):
+        '''Login using PLAIN mech. Must have AUTH=PLAIN capability.
+        '''
+        import base64
+        auth_tokens = base64.b64encode('%s\0%s\0%s' % (user,user,password))
+
+        return self.authenticate('PLAIN', auth_tokens )
+
+    def login_login(self, user, password):
+        '''Login using LOGIN mech. Must have AUTH=LOGIN capability.
+        '''
+        import base64
+        auth_tokens = [ base64.b64encode(user), base64.b64encode(password) ]
+
+        return self.authenticate('LOGIN', auth_tokens )
 
     def logout(self):
         '''
