@@ -1085,7 +1085,7 @@ class IMAP4P:
 
     def _checkUid(self):
         if self.as_uid is None:
-            self.as_uid = self.has_capability('UIDPLUS')
+            self.as_uid = self.has_capability('IMAP4REV1')
 
     def store_smart(self, message_set, command, flags):
         self._checkUid()
