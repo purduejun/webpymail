@@ -220,6 +220,76 @@ class Paginator(object):
     def is_not_first(self):
         return self.current_page > 1
 
+class Sorter(object):
+    '''This class profides the comparison function for sorting messages
+    according to the provided sort program.
+    '''
+    def __init__( self, message_dict, sort_program ):
+        '''
+        @message_dict - dict containing information about the messages in the
+          form { MSG_UID: { msg info }, ... }
+        @sort_program - tipple containing the sort program
+        '''
+        self.message_dict = message_dict
+        self.sort_program = sort_program
+
+    def cmp_func( self, a, b, reverse ):
+        if reverse:
+            return cmp(b,a)
+        else:
+            return cmp(a,b)
+
+    def cmp_ARRIVAL(self, a, b, reverse ):
+        a = self.message_dict[a]['data'].internaldate
+        b = self.message_dict[b]['data'].internaldate
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_CC(self, a, b, reverse ):
+        a = ', '.join( self.message_dict[a]['data'].envelope.cc_short() )
+        b = ', '.join( self.message_dict[b]['data'].envelope.cc_short() )
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_FROM(self, a, b, reverse ):
+        a = ', '.join( self.message_dict[a]['data'].envelope.from_short() )
+        b = ', '.join( self.message_dict[b]['data'].envelope.from_short() )
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_DATE(self, a, b, reverse ):
+        a = self.message_dict[a]['data'].envelope['env_date']
+        b = self.message_dict[b]['data'].envelope['env_date']
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_SIZE(self, a, b, reverse ):
+        a = self.message_dict[a]['data'].size
+        b = self.message_dict[b]['data'].size
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_SUBJECT(self, a, b, reverse ):
+        a = self.message_dict[a]['data'].envelope['env_subject']
+        b = self.message_dict[b]['data'].envelope['env_subject']
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_TO(self, a, b, reverse ):
+        a = ', '.join( self.message_dict[a]['data'].envelope.to_short() )
+        b = ', '.join( self.message_dict[b]['data'].envelope.to_short() )
+        return self.cmp_func( a, b, reverse )
+
+    def cmp_msg(self, a, b):
+        '''Read the sort program, compare using the first criteria, if a and b
+        are equal, uses the next criteria and so on. If the sort program is
+        completely consumed it returns the last comparison.
+        '''
+        for keyword in self.sort_program:
+            reverse = False
+            if keyword[0] == '-':
+                reverse = True
+                keyword = keyword[1:]
+
+            cmp_meth = getattr(self, 'cmp_%s' % keyword )
+            cmp_val = cmp_meth( a, b, reverse )
+            if cmp_val in (1,-1):
+                return cmp_val
+        return cmp_val
 
 class MessageList(object):
     def __init__(self, server, folder, threaded=False):
@@ -343,9 +413,11 @@ class MessageList(object):
 
         use = self.search_capability & self.show_style
         if use != self.show_style:
-            # We have to do some stuff by hand
-            #
+            # We'll have to make the sorting and threading by hand when we
+            # get the message's envelopes
+            flat_message_list = message_list
 
+            # TODO: This comment must be moved...
             # If we have to sort or thread on the client side, then
             # we have to get the envelope info from all the messages.
             #
@@ -356,8 +428,6 @@ class MessageList(object):
             # view. arrrgghhh! Even on this case it's good to have the threading
             # extension, since we can get the threaded list, and only do the
             # sorting client side...
-
-            raise NotImplementedYet('Capability to be implemented')
         else:
             if self.show_style == THREADED:
                 flat_message_list = list(flaten_nested(message_list))
@@ -397,21 +467,35 @@ class MessageList(object):
         '''
         use = self.search_capability & self.show_style
         if use != self.show_style:
-            raise SortProgError('')
+            # We have to sort and thread the messages by hand so we have to get
+            # the header information from all the messages in the message list.
+            message_list = list(self.flat_message_list)
+            if message_list:
+                for msg_id,msg_info in  self._imap.fetch_smart(message_list,
+                    '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)').iteritems():
+                    self.message_dict[msg_id]['data'] = Message(
+                        self.server, self.folder, msg_info )
 
-        # Get the message headers and construct
-        if self.paginator.msg_per_page == -1:
-            message_list = self.flat_message_list
+                if self.show_style == SORTED:
+                    # Sort the message list
+                    sorter = Sorter(self.message_dict, self.sort_program )
+                    message_list.sort(sorter.cmp_msg)
+
+                self.flat_message_list = message_list
         else:
-            first_msg = ( self.paginator.current_page - 1 ) * self.paginator.msg_per_page
-            last_message = first_msg + self.paginator.msg_per_page - 1
-            message_list = self.flat_message_list[first_msg:last_message+1]
+            # Get the message headers and construct
+            if self.paginator.msg_per_page == -1:
+                message_list = self.flat_message_list
+            else:
+                first_msg = ( self.paginator.current_page - 1 ) * self.paginator.msg_per_page
+                last_message = first_msg + self.paginator.msg_per_page - 1
+                message_list = self.flat_message_list[first_msg:last_message+1]
 
-        if message_list:
-            for msg_id,msg_info in  self._imap.fetch_smart(message_list,
-                        '(ENVELOPE RFC822.SIZE FLAGS)').iteritems():
-                self.message_dict[msg_id]['data'] = Message(
-                    self.server, self.folder, msg_info )
+            if message_list:
+                for msg_id,msg_info in self._imap.fetch_smart(message_list,
+                            '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)').iteritems():
+                    self.message_dict[msg_id]['data'] = Message(
+                        self.server, self.folder, msg_info )
 
     # Handle a request for a single message:
     def get_message(self, message_id ):
@@ -421,7 +505,7 @@ class MessageList(object):
         # Message object
         try:
             msg_info = self._imap.fetch_smart(message_id,
-                '(ENVELOPE RFC822.SIZE FLAGS)')[message_id]
+                '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)')[message_id]
         except KeyError:
             raise MessageNotFound('%s message not found' % message_id)
 
@@ -460,6 +544,7 @@ class Message(object):
         self.size = msg_info['RFC822.SIZE']
         self.uid = msg_info['UID']
         self.get_flags( msg_info['FLAGS'] )
+        self.internaldate = msg_info['INTERNALDATE']
 
         self.__bodystructure = None
 
