@@ -159,10 +159,10 @@ def envelopedate2datetime(resp):
 
     return datetime.datetime.fromtimestamp(utc - zone)
 
-def Internaldate2tuple(resp):
+def internaldate2datetime(resp):
     """Convert IMAP4 INTERNALDATE to UT.
 
-    Returns Python time module tuple.
+    Returns Python datetime.datetime object
     """
     mo = InternalDate.match(resp)
     if not mo:
@@ -198,7 +198,7 @@ def Internaldate2tuple(resp):
     else:
         zone = zone + time.timezone
 
-    return time.localtime(utc - zone)
+    return datetime.datetime.fromtimestamp(utc - zone)
 
 def shrink_fetch_list( msg_list ):
     '''Shrinks the message list to use on the fetch command, consecutive msg_list
@@ -212,7 +212,7 @@ def shrink_fetch_list( msg_list ):
     tmp = []
     msg_list = list(msg_list)
     if not msg_list: return []
-    
+
     msg_list.sort()
     last = msg_list[0]
     anchor = 0
