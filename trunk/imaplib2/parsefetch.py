@@ -29,7 +29,7 @@
 '''
 
 # Imports
-from utils import getUnicodeHeader, getUnicodeMailAddr, envelopedate2datetime
+from utils import getUnicodeHeader, getUnicodeMailAddr, internaldate2datetime, envelopedate2datetime
 from sexp import scan_sexp
 
 # Body structure
@@ -349,6 +349,10 @@ class Envelope( dict ):
         '''Returns a list with the first and last names'''
         return self.short_mail_list(self['env_from'])
 
+    def cc_short(self):
+        '''Returns a list with the first and last names'''
+        return self.short_mail_list(self['env_cc'])
+
 class FetchParser( dict ):
     '''This class parses the fetch response (already as a python dict) and
     further processes.
@@ -373,6 +377,9 @@ class FetchParser( dict ):
         return load_structure(body)
 
     BODYSTRUCTURE_data_item = BODY_data_item
+
+    def INTERNALDATE_data_item(self, arrival ):
+        return internaldate2datetime(arrival)
 
     def ENVELOPE_data_item(self, envelope ):
         return Envelope(envelope)
