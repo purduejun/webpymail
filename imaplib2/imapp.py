@@ -42,7 +42,7 @@ import socket
 from imapll import IMAP4, IMAP4_SSL
 from infolog import InfoLog
 from imapcommands import COMMANDS, STATUS
-from utils import makeTagged, unquote, Internaldate2tuple, shrink_fetch_list
+from utils import makeTagged, unquote, shrink_fetch_list
 from parsefetch import FetchParser
 import parselist
 from sexp import scan_sexp
