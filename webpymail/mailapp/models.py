@@ -96,7 +96,7 @@ class UserProfile(models.Model):
         unique=True,
         null=True )
 
-    ###sent_folder = models.TextField(max_length=128, default='INBOX')
+    sent_folder = models.TextField(max_length=128, default='INBOX')
 
     def save(self):
         super(UserProfile, self).save()
