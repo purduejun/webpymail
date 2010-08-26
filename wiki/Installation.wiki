@@ -1,4 +1,4 @@
-#summary Installation instructions
+﻿#summary Installation instructions
 #labels Featured
 
 = Warning =
@@ -29,11 +29,13 @@ cd webpymail-source
 export PYTHONPATH=`pwd`:$PYTHONPATH
 }}}
 
-  * Edit the webpymail/settings.py file according to your needs, the most important setting is:
+  * Create or edit the webpymail/local_settings.py file according to your needs, the most important setting to add is:
 
 {{{
 SMTPHOST = 'your smtp server'
 }}}
+
+The local_settings.py is imported from the main settings file. This way you don't have to reconfigure each time you update you svn working copy.
 
 Please note that, for the moment, no auth is supported on the smtp server.
 
