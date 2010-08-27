@@ -84,7 +84,7 @@
         {% if part.test_plain %}
             <pre>{% part_text message part "Plain" %}</pre>
         {% endif %}
-        {% if part.test_html %}
+        {% if part.test_html and not part.is_attachment %}
         <div class="attach_link">
             <a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">
             {% trans "View HTML message" %}</a> -
@@ -184,7 +184,7 @@
 </div>
 </div>
 <div class="message_info">
-<p><a href="{% url mailapp_message_header folder=message.folder.url,uid=message.uid %}">{% trans "Message Header" %}</a>|
+<p><a href="{% url mailapp_message_header folder=message.folder.url,uid=message.uid %}">{% trans "Message Header" %}</a> |
 <a href="{% url mailapp_message_structure folder=message.folder.url,uid=message.uid %}">{% trans "Message Structure" %}</a></p>
 </div>
 
