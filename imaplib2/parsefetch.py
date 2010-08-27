@@ -200,7 +200,7 @@ class Single ( BodyPart ):
 
     def filename(self):
         # TODO: first look for the name on the Content-Disposition header
-        # and only after this one should look on the Contant-Type Name parameter
+        # and only after this one should look on the Constant-Type Name parameter
         if self.body_fld_param.has_key('NAME'):
             return getUnicodeHeader(self.body_fld_param['NAME'])
         else:
@@ -209,6 +209,9 @@ class Single ( BodyPart ):
     def represent(self):
         return '%-10s %s/%s\n' % ( self.part_number, self.media,
             self.media_subtype )
+
+    def is_attachment(self):
+        return bool(self.filename())
 
     def __str__(self):
         return '<%s/%s>' % ( self.media, self.media_subtype )
@@ -271,15 +274,43 @@ class SingleTextBasic ( Single ):
         else:
             return None
 
+    def process_body_ext_1part(self):
+        self.body_fld_md5 = None
+        self.body_fld_dsp = None
+        self.body_fld_lang = None
+        self.body_fld_loc = None
+        self.body_extension = None
+
+        if isinstance( self.body_ext_1part, list ):
+            self.body_fld_md5 = self.body_ext_1part[0]
+
+            if len(self.body_ext_1part) > 1:
+                self.body_fld_dsp = self.body_ext_1part[1]
+            if len(self.body_ext_1part) > 2:
+                self.body_fld_lang = self.body_ext_1part[2]
+            if len(self.body_ext_1part) > 3:
+                self.body_fld_loc = self.body_ext_1part[3]
+            if len(self.body_ext_1part) > 4:
+                self.body_extension = self.body_ext_1part[4:]
+        else:
+            self.body_fld_md5 = self.body_ext_1part
+
+    def is_attachment(self):
+        if self.body_fld_dsp:
+            return self.body_fld_dsp[0].upper() == 'ATTACHMENT'
+        else:
+            return Single.is_attachment(self)
+
+
 class SingleText ( SingleTextBasic ):
     def __init__(self, structure, prefix, level, next, parent = None):
         SingleTextBasic.__init__(self, structure, prefix, level, next, parent )
         self.body_fld_lines = structure[7]
 
+        self.body_ext_1part = None
         if len(structure)>8:
             self.body_ext_1part = structure[8:]
-        else:
-            self.body_ext_1part = None
+        self.process_body_ext_1part()
 
     def is_text(self):
         return True
@@ -288,10 +319,10 @@ class SingleBasic ( SingleTextBasic ):
     def __init__(self, structure, prefix, level, next, parent = None):
         SingleTextBasic.__init__(self, structure, prefix, level, next, parent )
 
+        self.body_ext_1part = None
         if len(structure)>7:
             self.body_ext_1part = structure[7:]
-        else:
-            self.body_ext_1part = None
+        self.process_body_ext_1part()
 
     def is_basic(self):
         '''Only true for media!='TEXT' '''
