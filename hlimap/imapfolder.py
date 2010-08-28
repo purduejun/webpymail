@@ -31,6 +31,12 @@ class DupError(Exception): pass
 class NoSuchFolder(Exception): pass
 class NoFolderListError(Exception): pass
 
+# CONFIGURATION
+
+LISTINBOX = True # Show the INBOX folder even if it's unsubscribed
+
+# END CONFIGURATION
+
 class FolderTree(object):
     def __init__(self, server ):
         '''Initializes the folder tree.
@@ -49,6 +55,13 @@ class FolderTree(object):
             flat_list = self._imap.lsub("", "*")
         else:
             flat_list = self._imap.list("", "*")
+
+        if LISTINBOX:
+            if 'INBOX' not in flat_list:
+                inbox_list = self._imap.list("", "INBOX")
+                if not inbox_list:
+                    raise NoFolderListError('No INBOX folder found')
+                flat_list.insert(0, inbox_list[0])
 
         if not flat_list:
             raise NoFolderListError('No folders found')
@@ -160,7 +173,10 @@ class FolderTree(object):
     def get_folder(self, path):
         if not self.folder_dict.has_key(path):
             try:
-                mailbox = self._imap.lsub("", path)[0]
+                if LISTINBOX and (path.upper() == 'INBOX'):
+                    mailbox = self._imap.list("", path)[0]
+                else:
+                    mailbox = self._imap.lsub("", path)[0]
                 self.dl = mailbox.delimiter
             except IndexError:
                 raise NoSuchFolder(path)
