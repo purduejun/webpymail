@@ -188,7 +188,7 @@ class Single ( BodyPart ):
             it = iter(structure[2])
             for name,value in zip(it,it):
                 if name:
-                    self.body_fld_param[name] = value
+                    self.body_fld_param[name.upper()] = value
 
         self.part_number = '%s%d' % (prefix, level)
 
