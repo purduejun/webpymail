@@ -35,7 +35,7 @@ NOSELECT = r'\Noselect'
 HASCHILDREN = r'\HasChildren'
 HASNOCHILDREN = r'\HasNoChildren'
 
-class Mailbox:
+class Mailbox(object):
     def __init__(self, path, attributes, delimiter):
         self.path = path
         self.delimiter = delimiter
@@ -55,6 +55,27 @@ class Mailbox:
 
     def has_children(self):
         return self.test_attribute(HASCHILDREN)
+
+    # Operators
+    def __eq__(self, y ):
+        '''Compares the mailbox name against a string or against another
+        mailbox object.
+        '''
+        if isinstance( y, Mailbox):
+            return self.__hash__() == y.__hash__()
+        elif isinstance( y, str):
+            mailbox = self.path
+            if mailbox.upper() == 'INBOX':
+                # INBOX should be case insensitive
+                mailbox = 'INBOX'
+                y = y.upper()
+            return y == mailbox
+
+    def __str__(self):
+        if self.path.upper() == 'INBOX':
+            # INBOX should be case insensitive
+            return 'INBOX'
+        return self.path
 
     # Mailbox name
     def level(self):
