@@ -35,10 +35,10 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Root:
-    (r'^$','webpymail.mailapp.message_views.index'),
+    (r'^$','webpymail.mailapp.views.message.index'),
 
     # Mail Interface:
-    (r'^mail/', include('webpymail.mailapp.mail_urls')),
+    (r'^mail/', include('webpymail.mailapp.urls')),
 
     # Authentication interface:
     (r'^auth/', include('webpymail.wpmauth.urls')),
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
     (r'^admin/(.*)', admin.site.root),
 
     # Generic:
-    url(r'^not_implemented/$', 'webpymail.mailapp.message_views.not_implemented',
+    url(r'^not_implemented/$', 'webpymail.mailapp.views.message.not_implemented',
         name='not_implemented'),
 )
 

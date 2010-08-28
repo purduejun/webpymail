@@ -38,7 +38,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 # Local
-from webpymail.mailapp.models import FoldersToExpand
+from mailapp.models import FoldersToExpand
 from utils import serverLogin
 
 ##

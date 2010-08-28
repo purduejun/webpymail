@@ -32,7 +32,7 @@ from django.conf.urls.defaults import patterns, url
 folder_pat = r'FOLDER_(?P<folder>[A-Za-z0-9+.&%_=-]+)'
 
 # Folders views:
-urlpatterns = patterns('webpymail.mailapp.folder_views',
+urlpatterns = patterns('mailapp.views.folder',
     url(r'^$', 'show_folders_view', name='folder_list'),
     url(r'^' + folder_pat + r'/expand/$', 'set_folder_expand',
         name='set_folder_expand'),
@@ -41,13 +41,13 @@ urlpatterns = patterns('webpymail.mailapp.folder_views',
 )
 
 # Message list views
-urlpatterns += patterns('webpymail.mailapp.list_views',
+urlpatterns += patterns('mailapp.views.message_list',
     url(r'^' + folder_pat + r'/$', 'show_message_list_view',
         name='message_list'),
 )
 
 # Messages views:
-urlpatterns += patterns('webpymail.mailapp.message_views',
+urlpatterns += patterns('mailapp.views.message',
     url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/$', 'show_message',
         name='mailapp-message'),
 
@@ -62,7 +62,7 @@ urlpatterns += patterns('webpymail.mailapp.message_views',
     )
 
 # Compose messages:
-urlpatterns += patterns('webpymail.mailapp.compose_views',
+urlpatterns += patterns('mailapp.views.compose',
     url(r'^compose/$', 'new_message', name='mailapp_send_message'),
     url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/REPLY/$',
         'reply_message', name='mailapp_reply_message'),
