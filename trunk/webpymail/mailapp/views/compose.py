@@ -43,9 +43,10 @@ from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
 # Local Imports
-from models import Attachments
-from formsmail import ComposeMailForm
+from mailapp.models import Attachments
 from utils import *
+
+from mailapp.forms import ComposeMailForm
 
 # RE
 

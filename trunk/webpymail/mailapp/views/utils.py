@@ -64,6 +64,11 @@ def serverLogin( request ):
             request.session['password'])
         return M
     except:
+        # TODO: The server can for some reason fail to login the user during a
+        # normal session.
+        # An exception should be raised here descriptive enough of what's
+        # going on. Gmail's imap can for instance answer all requests with:
+        #  NO [ALERT] Too many simultaneous connections. (Failure)
         raise Http404
 
 def join_address_list( addr_list ):

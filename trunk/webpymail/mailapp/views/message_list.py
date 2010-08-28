@@ -39,7 +39,8 @@ from django.conf import settings
 # Local
 from utils import serverLogin
 import msgactions
-from formsmail import MessageActionForm
+
+from mailapp.forms import MessageActionForm
 
 ##
 # Views

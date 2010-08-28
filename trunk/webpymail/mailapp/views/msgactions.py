@@ -32,7 +32,7 @@
 from django.http import Http404
 
 # Local
-from formsmail import MessageActionForm
+from mailapp.forms import MessageActionForm
 
 # System flags
 DELETED = r'\Deleted'
