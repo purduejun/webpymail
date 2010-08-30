@@ -55,8 +55,8 @@
     </div>
     {% if message.deleted %}</div>{% endif %}
     <div class="date">{% trans "Size" %}: {{ message.size }} B</div>
-    <p>{% trans "From" %}: {% for addr in message.envelope.from_short %}{{addr}}, {% endfor %}</p>
-    <p>{% trans "To" %}:{% for addr in message.envelope.to_short %}{{addr}}, {% endfor %}</p>
+    <p>{% trans "From" %}: {{ message.envelope.from_short|join:", " }}</p>
+    <p>{% trans "To" %}: {{ message.envelope.to_short|join:", " }}</p>
     </div>
     </div>
 {% endfor %}
