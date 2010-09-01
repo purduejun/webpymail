@@ -36,7 +36,7 @@ from django.conf import settings
 
 # Local imports:
 from forms import LoginForm
-from utils import server_config
+from utils.config import server_config
 
 def loginView(request):
     """Login the user on the system
@@ -71,11 +71,11 @@ def loginView(request):
                     login(request, user)
 
                     # Not an imap user:
-                    if (request.session['_auth_user_backend'] == 
+                    if (request.session['_auth_user_backend'] ==
                      'django.contrib.auth.backends.ModelBackend'):
                         return render_to_response('wpmauth/login.html',
                         { 'form': form,
-                          'error_message': _('This is not an IMAP ' 
+                          'error_message': _('This is not an IMAP '
                                  'valid account. Please try again.') })
 
                     request.session['username'] = username
