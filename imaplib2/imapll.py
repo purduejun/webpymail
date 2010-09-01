@@ -440,7 +440,13 @@ class IMAP4_SSL(IMAP4):
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect((host, port))
-        self.sslobj = socket.ssl(self.sock, self.keyfile, self.certfile)
+
+        try:
+            import ssl
+            self.sslobj = ssl.wrap_socket(self.sock, self.keyfile, self.certfile)
+        except ImportError:
+            # socket.ssl is deprectated in python >= 2.6
+            self.sslobj = socket.ssl(self.sock, self.keyfile, self.certfile)
 
     def read(self, size):
         """Read 'size' bytes from remote."""
@@ -464,7 +470,7 @@ class IMAP4_SSL(IMAP4):
         while 1:
             char = self.sslobj.read(1)
             line.append(char)
-            if char == "\n":
+            if char == "\n" or len(char)==0:
                 if __debug__:
                     if Debug & D_SERVER:
                         print 'S: %s' % ''.join(line).replace(CRLF,'<cr><lf>')
