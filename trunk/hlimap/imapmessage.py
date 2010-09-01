@@ -562,12 +562,12 @@ class Message(object):
         query = part.query()
         text = self.fetch(query)
 
-        if part.body_fld_enc == 'BASE64':
+        if part.body_fld_enc.upper() == 'BASE64':
             text = base64.b64decode(text )
-        elif part.body_fld_enc == 'QUOTED-PRINTABLE':
+        elif part.body_fld_enc.upper() == 'QUOTED-PRINTABLE':
             text = quopri.decodestring(text)
 
-        if part.media == 'TEXT' and part.media_subtype != 'HTML':
+        if part.media.upper() == 'TEXT' and part.media_subtype.upper() != 'HTML':
             # The HTML should have a meta tag with the correct charset encoding
             try:
                 return unicode(text, part.charset())
