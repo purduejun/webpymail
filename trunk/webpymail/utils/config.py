@@ -34,11 +34,11 @@ import re
 
 from django.conf import settings
 
-from webpymail.util.mix import cmp_dict
+from utils.mix import cmp_dict
 
 # re:
 
-identity_re = re.compile(r'^identity(?P<id_number>[0-9]+)$')
+identity_re = re.compile(r'^identity-(?P<id_number>[0-9]+)$')
 
 def user_config( server_name, user_name ):
     '''
@@ -51,9 +51,14 @@ def user_config( server_name, user_name ):
     '''
     config = SafeConfigParser()
 
-    user_conf=os.path.join(USERCONFDIR, '%s@%s.conf' % (user_name, server_name))
-    server_conf = os.path.join(SERVERCONFDIR, '%s.conf' % server_name )
-    
+    user_conf=os.path.join(settings.USERCONFDIR, '%s@%s.conf' % (user_name,
+        server_name))
+
+    if not os.path.isfile(user_conf): # Touch the config file
+        open(user_conf, 'w').close()
+
+    server_conf = os.path.join(settings.SERVERCONFDIR, '%s.conf' % server_name )
+
     config.read( [ settings.FACTORYCONF,
                    settings.DEFAULTCONF,
                    user_conf,
@@ -61,6 +66,17 @@ def user_config( server_name, user_name ):
                    settings.SYSTEMCONF ] )
 
     return config
+
+def config_from_request( request ):
+    '''
+    Read the user configuration.
+
+    @param request: django request
+
+    @return configuration object.
+    '''
+    return user_config( request.session['host'],
+                        request.session['username'] )
 
 def user_identities( config ):
     '''
@@ -73,13 +89,42 @@ def user_identities( config ):
     identity_list = []
     for section in config.sections():
         identity_sec = identity_re.match(section)
-        if resp:
+        if identity_sec:
             identity = {}
             identity['id_number'] = int(identity_sec.group('id_number'))
             for option in config.options(section):
                 identity[option] = config.get( section, option )
             identity_list.append( identity )
     identity_list.sort(cmp_dict( 'id_number' ))
-    
+
     return identity_list
-    
+
+def server_config():
+    '''
+    Returns the server(s) configuration.
+    '''
+    config = SafeConfigParser()
+
+    config.read( settings.SERVERCONF )
+
+    return config
+
+def server_list():
+    '''
+    Returns a list of server configurations. This is the login server, ie, the
+    server against which the users autenticate.
+    '''
+    config = server_config()
+
+    server_list = []
+    k = 0
+    for server in config.sections():
+        s = {}
+        s['label'] = server
+        k += 1
+        for option in config.options(server):
+            s[option] = config.get( server, option )
+        server_list.append(s)
+    server_list.sort(cmp_dict('name'))
+
+    return server_list

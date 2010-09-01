@@ -29,9 +29,8 @@ Assorted uncategorized functions
 
 def cmp_dict( key ):
     '''
-    Returns a comparation function (similar to 'cmp') for dictionary lists.
+    Returns a comparation function (similar to 'cmp') for lists of dictionaries.
     '''
     def cmpd( a, b ):
-        print key
         return cmp( a[key], b[key] )
     return cmpd
