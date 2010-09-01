@@ -36,6 +36,7 @@ from django.conf import settings
 
 import re
 
+from utils.config import  config_from_request, user_identities
 from multifile import *
 
 # Mail form exceptions
@@ -114,15 +115,29 @@ class MultyChecksum(forms.Field):
 
 class ComposeMailForm(forms.Form):
     def __init__(self, *args, **kwargs):
-        profile = kwargs.pop('user_profile')
+
+        request = kwargs.pop('request')
         super(ComposeMailForm, self).__init__(*args, **kwargs)
 
         # Populate the identity choices
-        from_list = [ ( profile.default_identity,
-                        profile.default_identity ) ]
-        for identity in profile.useridentity_set.all():
-            if identity != profile.default_identity:
-                from_list += [ (identity, identity ) ]
+        config = config_from_request( request )
+        identity_list = user_identities( config )
+        from_list = []
+        for identity in identity_list:
+            if identity['user_name'] and identity['mail_address']:
+                addr = '"%s" <%s>' % (identity['user_name'],
+                                      identity['mail_address'] )
+            elif identity['mail_address']:
+                addr = '<%s>' % identity['mail_address']
+            else:
+                continue
+
+            from_list.append( (addr, addr ) )
+
+        if not from_list:
+            addr = '<%s@%s>' % ( request.session['username'],
+                                 request.session['host'] )
+            from_list = [ (addr, addr )]
         self.fields['from_addr'].choices = from_list
 
     from_addr    = forms.ChoiceField(
