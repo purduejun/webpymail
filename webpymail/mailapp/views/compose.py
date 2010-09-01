@@ -21,7 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id: compose_views.py 436 2008-12-11 18:25:59Z helder $
+# $Id$
 #
 
 """Compose message forms
