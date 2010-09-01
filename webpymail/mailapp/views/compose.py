@@ -164,7 +164,7 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
 
         user_profile = request.user.get_profile()
 
-        form = ComposeMailForm(new_data, user_profile = user_profile)
+        form = ComposeMailForm(new_data, request = request)
 
         if new_data.has_key('upload'):
             other_action = True
@@ -236,7 +236,7 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
             uploaded_files = []
 
         form = ComposeMailForm(initial=initial,
-            user_profile = request.user.get_profile())
+            request = request )
         return render_to_response('send_message.html', {'form':form,
             'uploaded_files': uploaded_files })
 
