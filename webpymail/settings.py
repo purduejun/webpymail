@@ -158,13 +158,6 @@ SINGLELINELEN = 60
 TEXTAREAROWS = 15
 TEXTAREACOLS = 60
 
-# SMTP SETTINGS
-
-SMTPHOST = 'smtpserver'
-SMTPPORT = 25
-SMTPUSER = None # TODO: auth smtp
-SMTPPASS = None # TODO: auth smtp
-
 # Attachments
 
 TEMPDIR = '/tmp' # Temporary dir to store the attachements
