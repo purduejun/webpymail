@@ -31,15 +31,11 @@ cd webpymail-source
 export PYTHONPATH=`pwd`:$PYTHONPATH
 }}}
 
-  * Create or edit the webpymail/local_settings.py file according to your needs, the most important setting to add is:
+  * Create or edit the webpymail/local_settings.py file according to your needs.
+The local_settings.py is imported from the main settings file. This way you
+don't have to reconfigure each time you update you svn working copy.
 
-{{{
-SMTPHOST = 'your smtp server'
-}}}
-
-The local_settings.py is imported from the main settings file. This way you don't have to reconfigure each time you update you svn working copy.
-
-Please note that, for the moment, no auth is supported on the smtp server.
+I'll try to shift all the needed configurations to the configuration files.
 
   * Edit the file servers.conf in webpymail/config/servers.conf and add your server. Please note that right now the Google IMAP is not working (they don't support server side threading and sorting and we still don't do that on the client side). A server entry must be something like:
 
@@ -52,11 +48,25 @@ port = 993
 ssl  = true
 }}}
 
-  * Create the temporary directory to store the attachments while composing a message, by default:
+  * Define a smtp server use a [smtp] section. This can be done in
+webpymail/config/defaults.conf for a system wide configuration:
 
 {{{
-mkdir /tmp/webpymail
+[smtp]
+
+host   = smtp.example.com
+port   = 25
+user   = auser
+passwd = apass
+security = tls
 }}}
+
+The security can be tls, ssl or none.
+
+If you wish to have different configurations by server you will have to define
+these settings in the specific server configuration file that lives in
+webpymail/config/servers/<hostname>.conf. Take a look at the next section for
+information about configuration file precedences.
 
   * Go to the webpymail dir and create the data base:
 
@@ -105,15 +115,15 @@ The paths to these files are defined on the settings.py file. You can change thi
 
 == Configuration Options ==
 
-*Identities* 
+=== Identities ===
 
 The user can customize one or more identities. Usually these are defined on the per user configuration file in *USERCONFDIR/`<user name>@<host>.conf`*. Each identity must have its own section. The identity section must be named in the form *identity-##* where ## is an integer. Right now the available configuration parameters are:
 
  * *user_name*
- * *mail_address*  
+ * *mail_address*
 
 An identity configuration example might be:
- 
+
 {{{
 [identity-00]
 
@@ -125,3 +135,17 @@ mail_address    = helder@example.com
 user_name       = Helder Guerreiro
 mail_address    = postmaster@example.com
 }}}
+
+=== Section smtp ===
+
+Define the SMTP server to connect to in order to send mail. The available
+options are:
+
+ * *host* - SMTP server
+ * *port* - (default: 25)
+ * *user* - If specified an attempt to login will be made
+ * *passwd* - password for the SMTP server
+ * *security* - the available options are:
+   * TLS
+   * SSL
+   * none
