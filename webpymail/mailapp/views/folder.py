@@ -39,7 +39,7 @@ from django.core.urlresolvers import reverse
 
 # Local
 from mailapp.models import FoldersToExpand
-from utils import serverLogin
+from mail_utils import serverLogin
 
 ##
 # Views

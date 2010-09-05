@@ -37,7 +37,7 @@ from django.shortcuts import render_to_response
 from django.conf import settings
 
 # Local
-from utils import serverLogin
+from mail_utils import serverLogin
 import msgactions
 
 from mailapp.forms import MessageActionForm

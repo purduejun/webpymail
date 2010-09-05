@@ -38,7 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
 # Local
-from utils import serverLogin
+from mail_utils import serverLogin
 import msgactions
 
 @login_required
