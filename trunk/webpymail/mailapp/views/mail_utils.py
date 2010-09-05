@@ -47,7 +47,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.message import MIMEMessage
 from email import message_from_file
 
-from smtplib import SMTPRecipientsRefused, SMTPException, SMTP
+from smtplib import SMTPRecipientsRefused, SMTPException, SMTP, SMTP_SSL
 
 # Mail
 from hlimap import ImapServer
@@ -224,12 +224,21 @@ def compose_rfc822( from_addr, to_addr, cc_addr, bcc_addr,
 
     return msg
 
-def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None ):
+def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None,
+    security = None ):
     '''
     Sends a message to a smtp server
     '''
-    s = SMTP(smtp_host, smtp_port)
+    if security == 'SSL':
+        s = SMTP_SSL(smtp_host, smtp_port)
+    else:
+        s = SMTP(smtp_host, smtp_port)
+    # s.set_debuglevel(10)
+    s.ehlo()
 
+    if security == 'TLS':
+        s.starttls()
+        s.ehlo()
     if user:
         s.login( user, passwd)
 

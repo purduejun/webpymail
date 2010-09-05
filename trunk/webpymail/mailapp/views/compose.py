@@ -33,6 +33,7 @@ import tempfile
 import os
 import re
 import base64
+from smtplib import SMTPRecipientsRefused, SMTPException
 
 # Django
 from django.conf import settings
@@ -44,7 +45,8 @@ from django.utils.translation import ugettext as _
 
 # Local Imports
 from mailapp.models import Attachments
-from utils import *
+from mail_utils import serverLogin, send_mail, join_address_list, mail_addr_str, mail_addr_name_str, quote_wrap_lines, show_addrs, compose_rfc822
+from webpymail.utils.config import config_from_request
 
 from mailapp.forms import ComposeMailForm
 
@@ -187,12 +189,15 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
                 subject, message_text, message_html, uploaded_files )
 
             try:
-                smtp_host = settings.SMTPHOST
-                smtp_port = settings.SMTPPORT
-                user = settings.SMTPUSER
-                passwd = settings.SMTPPASS
+                config = config_from_request( request )
 
-                send_mail( message,  smtp_host, smtp_port, user, passwd)
+                host = config.get('smtp', 'host')
+                port = config.get('smtp', 'port')
+                user = config.get('smtp', 'user')
+                passwd = config.get('smtp', 'passwd')
+                security = config.get('smtp', 'security').upper()
+
+                send_mail( message,  host, port, user, passwd, security)
             except SMTPRecipientsRefused, detail:
                 error_message = ''.join(
                     ['<p>%s' % escape(detail.recipients[Xi][1])
