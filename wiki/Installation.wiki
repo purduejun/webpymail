@@ -1,12 +1,11 @@
 ﻿#summary Installation instructions
 #labels Featured
 
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 
 = Warning =
 
-Webpymail is still on its early development stages, it's not yet
-feature complete and could possibly cause damage to you data.
+Webpymail is still on its early development stages, it's not yet feature complete and could possibly cause damage to you data.
 
 = Dependencies =
 
@@ -31,13 +30,11 @@ cd webpymail-source
 export PYTHONPATH=`pwd`:$PYTHONPATH
 }}}
 
-  * Create or edit the webpymail/local_settings.py file according to your needs.
-The local_settings.py is imported from the main settings file. This way you
-don't have to reconfigure each time you update you svn working copy.
+  * Create or edit the webpymail/local_settings.py file according to your needs. The local_settings.py is imported from the main settings file. This way you don't have to reconfigure each time you update you svn working copy.
 
-I'll try to shift all the needed configurations to the configuration files.
+ I'll try to shift all the needed configurations to the configuration files.
 
-  * Edit the file servers.conf in webpymail/config/servers.conf and add your server. Please note that right now the Google IMAP is not working (they don't support server side threading and sorting and we still don't do that on the client side). A server entry must be something like:
+  * Edit the file servers.conf in webpymail/config/servers.conf and add your server. A server entry must be something like:
 
 {{{
 [macavity]
@@ -48,8 +45,7 @@ port = 993
 ssl  = true
 }}}
 
-  * Define a smtp server use a [smtp] section. This can be done in
-webpymail/config/defaults.conf for a system wide configuration:
+  * Define a smtp server use a [smtp] section. This can be done in webpymail/config/defaults.conf for a system wide configuration:
 
 {{{
 [smtp]
@@ -61,12 +57,9 @@ passwd = apass
 security = tls
 }}}
 
-The security can be tls, ssl or none.
+ The security can be tls, ssl or none.
 
-If you wish to have different configurations by server you will have to define
-these settings in the specific server configuration file that lives in
-webpymail/config/servers/<hostname>.conf. Take a look at the next section for
-information about configuration file precedences.
+ If you wish to have different configurations by server you will have to define these settings in the specific server configuration file that lives in webpymail/config/servers/`<hostname>`.conf. Take a look at the next section for information about configuration file precedences.
 
   * Go to the webpymail dir and create the data base:
 
@@ -136,10 +129,9 @@ user_name       = Helder Guerreiro
 mail_address    = postmaster@example.com
 }}}
 
-=== Section smtp ===
+=== smtp ===
 
-Define the SMTP server to connect to in order to send mail. The available
-options are:
+Define the SMTP server to connect to in order to send mail. The available options are:
 
  * *host* - SMTP server
  * *port* - (default: 25)
@@ -149,3 +141,27 @@ options are:
    * TLS
    * SSL
    * none
+ * NOT IMPLEMENTED YET *use_imap_auth* - (default: False) - if true the imap user/pass pair will be used to authenticate against the smtp server. 
+
+For example we may have:
+
+{{{
+[smtp]
+
+host = smtp.googlemail.com
+port = 465
+user = auser@gmail.com
+passwd = XXXXXXXXXX
+security = SSL
+}}}
+
+Or simply: (NOT IMPLEMENTED YET)
+
+{{{
+[smtp]
+
+host = smtp.googlemail.com
+port = 465
+security = SSL
+use_imap_auth = True
+}}}
