@@ -517,7 +517,7 @@ class MessageList(object):
         '''
         if self.refresh:
             self.refresh_messages()
-        self.add_messages_range()
+            self.add_messages_range()
 
         if self.paginator.msg_per_page == -1:
             message_list = self.flat_message_list
