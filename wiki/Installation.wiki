@@ -1,4 +1,4 @@
-﻿#summary Installation instructions
+#summary Installation instructions
 #labels Featured
 
 <wiki:toc max_depth="3" />
@@ -12,7 +12,7 @@ Webpymail is still on its early development stages, it's not yet feature complet
 To test webpymail you need:
 
   # Django svn
-  # Python 2.5
+  # Python 2.5 (>= 2.6.5 for SSL SMTP server support)
 
 = Installation =
 
@@ -37,10 +37,10 @@ export PYTHONPATH=`pwd`:$PYTHONPATH
   * Edit the file servers.conf in webpymail/config/servers.conf and add your server. A server entry must be something like:
 
 {{{
-[macavity]
+[example]
 
-name = Macavity
-host = paxjulia.com
+name = Example Server
+host = imap.example.com
 port = 993
 ssl  = true
 }}}
@@ -60,6 +60,8 @@ security = tls
  The security can be tls, ssl or none.
 
  If you wish to have different configurations by server you will have to define these settings in the specific server configuration file that lives in webpymail/config/servers/`<hostname>`.conf. Take a look at the next section for information about configuration file precedences.
+
+ For the Google Mail IMAP server a pre-made configuration is shipped in webpymail/config/servers/imap.gmail.com.conf .
 
   * Go to the webpymail dir and create the data base:
 
@@ -141,7 +143,7 @@ Define the SMTP server to connect to in order to send mail. The available option
    * TLS
    * SSL
    * none
- * NOT IMPLEMENTED YET *use_imap_auth* - (default: False) - if true the imap user/pass pair will be used to authenticate against the smtp server. 
+ * *use_imap_auth* - (default: False) - if true the imap user/pass pair will be used to authenticate against the smtp server.
 
 For example we may have:
 
@@ -150,12 +152,12 @@ For example we may have:
 
 host = smtp.googlemail.com
 port = 465
-user = auser@gmail.com
+user = a_user@gmail.com
 passwd = XXXXXXXXXX
 security = SSL
 }}}
 
-Or simply: (NOT IMPLEMENTED YET)
+Or (SSL support):
 
 {{{
 [smtp]
@@ -163,5 +165,16 @@ Or simply: (NOT IMPLEMENTED YET)
 host = smtp.googlemail.com
 port = 465
 security = SSL
+use_imap_auth = True
+}}}
+
+Or (TLS support):
+
+{{{
+[smtp]
+
+host = smtp.gmail.com
+port = 587
+security = TLS
 use_imap_auth = True
 }}}
