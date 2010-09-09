@@ -21,7 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id: webtags.py 364 2008-06-16 11:46:37Z helder $
+# $Id$
 #
 
 from django import template

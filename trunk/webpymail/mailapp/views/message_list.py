@@ -21,7 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id: list_views.py 431 2008-12-03 17:49:12Z helder $
+# $Id$
 #
 
 """Display message lists and associated actions

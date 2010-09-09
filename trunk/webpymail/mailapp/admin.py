@@ -21,7 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id: admin.py 433 2008-12-04 17:50:10Z helder $
+# $Id$
 #
 
 """Django administrative interface
