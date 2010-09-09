@@ -21,7 +21,7 @@
 #
 # Helder Guerreiro <helder@paxjulia.com>
 #
-# $Id: mail_urls.py 434 2008-12-05 16:55:47Z helder $
+# $Id$
 #
 
 """Mail interface"""
