@@ -67,27 +67,28 @@ def show_message_list_view(request, folder=settings.DEFAULT_FOLDER):
         search_criteria = 'KEYWORD %s' % flag
 
     message_list.set_search_expression(search_criteria)
-
-    # Pagination
-    message_list.paginator.msg_per_page = 40
-    page = request.GET.get('page',1)
-    try:
-        page = int(page)
-    except:
-        page = 1
-    message_list.paginator.current_page = page
-
-    message_list.add_messages_range()
+    message_list.refresh_messages()
 
     # Message action form
-    raw_message_list = [ (message.uid,message.uid) for message in folder ]
-
+    raw_message_list = [ (uid,uid) for uid in message_list.flat_message_list ]
     form_data = { 'folder': folder.url() }
     form = MessageActionForm(data=form_data,  message_list=raw_message_list)
 
     # If it's a POST request
     if request.method == 'POST':
         msgactions.batch_change( request, folder, raw_message_list )
+
+    # Pagination
+    message_list.paginator.msg_per_page = 40
+    try:
+        page = int(request.GET.get('page',1))
+    except:
+        page = request.GET.get('page',1)
+        if page == 'all':
+            message_list.paginator.msg_per_page = -1
+        page = 1
+    message_list.paginator.current_page = page
+    message_list.add_messages_range()
 
     # Show the message list
     return render_to_response('message_list.html',{

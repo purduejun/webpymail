@@ -349,7 +349,8 @@ class Folder(object):
 
     def expunge(self):
         self._imap.expunge()
-        self.__message_list = None
+        if self.__message_list:
+            self.message_list.refresh_messages()
 
     def set_flags(self, message_list, *args ):
         return self._imap.store_smart(message_list, '+FLAGS.SILENT', args)
