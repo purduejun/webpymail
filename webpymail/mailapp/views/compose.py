@@ -192,10 +192,15 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
                 config = config_from_request( request )
 
                 host = config.get('smtp', 'host')
-                port = config.get('smtp', 'port')
+                port = config.getint('smtp', 'port')
                 user = config.get('smtp', 'user')
                 passwd = config.get('smtp', 'passwd')
                 security = config.get('smtp', 'security').upper()
+                use_imap_auth = config.getboolean('smtp', 'use_imap_auth')
+
+                if use_imap_auth:
+                    user = request.session['username']
+                    passwd = request.session['password']
 
                 send_mail( message,  host, port, user, passwd, security)
             except SMTPRecipientsRefused, detail:

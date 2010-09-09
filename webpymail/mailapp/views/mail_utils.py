@@ -32,6 +32,7 @@
 # Sys
 import time
 import textwrap
+import sys
 
 # Django
 from django.conf import settings
@@ -47,7 +48,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.message import MIMEMessage
 from email import message_from_file
 
-from smtplib import SMTPRecipientsRefused, SMTPException, SMTP, SMTP_SSL
+HAS_SMTP_SSL = sys.version_info[0] == 2 and sys.version_info[1] >= 6 and sys.version_info[2] >= 5
+if HAS_SMTP_SSL:
+    from smtplib import SMTPRecipientsRefused, SMTPException, SMTP, SMTP_SSL
+else:
+    from smtplib import SMTPRecipientsRefused, SMTPException, SMTP
 
 # Mail
 from hlimap import ImapServer
@@ -230,6 +235,8 @@ def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None,
     Sends a message to a smtp server
     '''
     if security == 'SSL':
+        if not HAS_SMTP_SSL:
+            raise Exception('Sorry. For SMTP_SSL support you need Python >= 2.6.5')
         s = SMTP_SSL(smtp_host, smtp_port)
     else:
         s = SMTP(smtp_host, smtp_port)
@@ -240,7 +247,7 @@ def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None,
         s.starttls()
         s.ehlo()
     if user:
-        s.login( user, passwd)
+        s.login(user, passwd)
 
     to_addr_list = []
 
