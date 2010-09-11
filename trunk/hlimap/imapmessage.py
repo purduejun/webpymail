@@ -389,15 +389,15 @@ class MessageList(object):
 
         if use == THREADED:
             # We have the THREAD extension:
-            message_list = self._imap.thread_smart(self.thread_alg,
+            message_list = self._imap.thread(self.thread_alg,
                 'utf-8', self.search_expression)
         elif use == SORTED:
             # We have the SORT extension on the server:
-            message_list = self._imap.sort_smart(self.sort_string(),
+            message_list = self._imap.sort(self.sort_string(),
                 'utf-8', self.search_expression)
         else:
             # Just get the list.
-            message_list = self._imap.search_smart(self.search_expression)
+            message_list = self._imap.search(self.search_expression)
 
         return message_list
 
@@ -471,7 +471,7 @@ class MessageList(object):
             # the header information from all the messages in the message list.
             message_list = list(self.flat_message_list)
             if message_list:
-                for msg_id,msg_info in  self._imap.fetch_smart(message_list,
+                for msg_id,msg_info in  self._imap.fetch(message_list,
                     '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)').iteritems():
                     self.message_dict[msg_id]['data'] = Message(
                         self.server, self.folder, msg_info )
@@ -492,7 +492,7 @@ class MessageList(object):
                 message_list = self.flat_message_list[first_msg:last_message+1]
 
             if message_list:
-                for msg_id,msg_info in self._imap.fetch_smart(message_list,
+                for msg_id,msg_info in self._imap.fetch(message_list,
                             '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)').iteritems():
                     self.message_dict[msg_id]['data'] = Message(
                         self.server, self.folder, msg_info )
@@ -504,7 +504,7 @@ class MessageList(object):
         # We need to get the msg envelope to initialize the
         # Message object
         try:
-            msg_info = self._imap.fetch_smart(message_id,
+            msg_info = self._imap.fetch(message_id,
                 '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)')[message_id]
         except KeyError:
             raise MessageNotFound('%s message not found' % message_id)
@@ -551,7 +551,7 @@ class Message(object):
     # Fetch messages
     def get_bodystructure(self):
         if not self.__bodystructure:
-            self.__bodystructure = self._imap.fetch_smart(self.uid,
+            self.__bodystructure = self._imap.fetch(self.uid,
                 '(BODYSTRUCTURE)')[self.uid]['BODYSTRUCTURE']
         return self.__bodystructure
     bodystructure = property(get_bodystructure)
@@ -586,7 +586,7 @@ class Message(object):
     def fetch(self, query ):
         '''Returns the fetch response for the query
         '''
-        return self._imap.fetch_smart(self.uid,query)[self.uid][query]
+        return self._imap.fetch(self.uid,query)[self.uid][query]
 
     def source(self):
         '''Returns the message source, untreated.
@@ -601,7 +601,7 @@ class Message(object):
         else:
             query = 'BODY[HEADER]'
 
-        text = self._imap.fetch_smart(self.uid,query)[self.uid][query]
+        text = self._imap.fetch(self.uid,query)[self.uid][query]
 
         return text
 
@@ -615,11 +615,11 @@ class Message(object):
         self.recent = RECENT in flags
 
     def set_flags(self, *args ):
-        self._imap.store_smart(self.uid, '+FLAGS', args)
+        self._imap.store(self.uid, '+FLAGS', args)
         self.get_flags( self._imap.sstatus['fetch_response'][self.uid]['FLAGS'] )
 
     def reset_flags(self, *args ):
-        self._imap.store_smart(self.uid, '-FLAGS', args)
+        self._imap.store(self.uid, '-FLAGS', args)
         self.get_flags( self._imap.sstatus['fetch_response'][self.uid]['FLAGS'] )
 
     # Special methods
