@@ -181,8 +181,8 @@ class IMAP4P:
         self.infolog.addEntry('WELCOME', self.welcome)
 
         self.capabilities = []
-        self.as_uid = None
-        self.as_sort = None
+        self.has_uid = None
+        self.has_sort = None
 
     def __del__(self):
         if __debug__:
@@ -561,7 +561,7 @@ class IMAP4P:
 
         return self.sstatus
 
-    def copy(self, message_list, mailbox ):
+    def copy_seq(self, message_list, mailbox ):
         '''Copy messages to mailbox'''
 
         name = 'COPY'
@@ -680,7 +680,7 @@ class IMAP4P:
         args = '%s %s' % (message_list,  message_parts)
         return process_command(name, args)['fetch_response']
 
-    def fetch(self, message_list, message_parts='(FLAGS)' ):
+    def fetch_seq(self, message_list, message_parts='(FLAGS)' ):
         '''Fetch (parts of) messages.'''
         return self._fetch( False, message_list, message_parts )
 
@@ -833,7 +833,7 @@ class IMAP4P:
         return self.processCommand( name, '"%s" "%s"' % (oldmailbox,
             newmailbox))
 
-    def search(self, criteria, charset=None):
+    def search_seq(self, criteria, charset=None):
         '''Search mailbox for matching messages'''
         name = 'SEARCH'
         self.sstatus['search_response'] = ()
@@ -878,7 +878,7 @@ class IMAP4P:
         return self.processCommand( name, '"%s" %s %s' % (mailbox, identifier,
             acl))
 
-    def sort(self, program, charset, search_criteria):
+    def sort_seq(self, program, charset, search_criteria):
         '''The SORT command is a variant of SEARCH with sorting semantics for
         the results.
 
@@ -904,7 +904,7 @@ class IMAP4P:
         return self.processCommand( name, '"%s" %s' % (mailbox,
             names))['status_response']
 
-    def store(self, message_set, command, flags):
+    def store_seq(self, message_set, command, flags):
         '''Alters flag dispositions for messages in mailbox.
 
         Possible commands:
@@ -949,7 +949,7 @@ class IMAP4P:
 
         return self.processCommand( name, '"%s"' % mailbox )
 
-    def thread(self, thread_alg, charset, search_criteria):
+    def thread_seq(self, thread_alg, charset, search_criteria):
         '''The THREAD command is a variant of SEARCH with threading semantics
         for the results.
 
@@ -1029,6 +1029,19 @@ class IMAP4P:
             raise self.Error('Error in command UID %s - %s' % (name,
                 response['tagged'][tag]['message']))
 
+    def copy_uid(self, message_set, mailbox ):
+        '''Copy messages to mailbox'''
+
+        name = 'COPY'
+
+        if isinstance(message_set, list):
+            message_set = shrink_fetch_list(message_set)
+            message_set = ','.join( '%s' % Xi for Xi in message_set)
+
+        args = '%s "%s"' % (message_set, mailbox)
+
+        return self.processCommandUID(name, args )
+
     def store_uid(self, message_set, command, flags):
         '''Alters flag dispositions for messages in mailbox UID version.
         '''
@@ -1080,21 +1093,28 @@ class IMAP4P:
     ## SMART commands
 
     def _checkSort(self):
-        if self.as_sort is None:
-            self.as_sort = self.has_capability('SORT')
+        if self.has_sort is None:
+            self.has_sort = self.has_capability('SORT')
 
     def _checkUid(self):
-        if self.as_uid is None:
-            self.as_uid = self.has_capability('IMAP4REV1')
+        if self.has_uid is None:
+            self.has_uid = self.has_capability('IMAP4REV1')
 
-    def store_smart(self, message_set, command, flags):
+    def copy(self, message_list, mailbox ):
         self._checkUid()
-        if self.as_uid:
+        if self.has_uid:
+            return self.copy_uid(message_list, mailbox )
+        else:
+            return self.copy_seq(message_list, mailbox )
+
+    def store(self, message_set, command, flags):
+        self._checkUid()
+        if self.has_uid:
             return self.store_uid(message_set, command, flags)
         else:
-            return self.store(message_set, command, flags)
+            return self.store_seq(message_set, command, flags)
 
-    def sort_smart(self, program, charset, search_criteria):
+    def sort(self, program, charset, search_criteria):
         '''Same parameters as sort
 
         This command will try to use SORT to get the messages using UIDs,
@@ -1105,39 +1125,39 @@ class IMAP4P:
         '''
         self._checkSort()
         self._checkUid()
-        if self.as_uid:
-            if self.as_sort:
+        if self.has_uid:
+            if self.has_sort:
                 return self.sort_uid(program, charset, search_criteria)
             else:
                 return self.search_uid(search_criteria, charset)
         else:
-            if self.as_sort:
-                return self.sort(program, charset, search_criteria)
+            if self.has_sort:
+                return self.sort_seq(program, charset, search_criteria)
             else:
-                return self.search(search_criteria, charset)
+                return self.search_seq(search_criteria, charset)
 
-    def search_smart( self, criteria, charset=None):
+    def search( self, criteria, charset=None):
         self._checkUid()
-        if self.as_uid:
+        if self.has_uid:
             return self.search_uid(criteria, charset)
         else:
-            return self.search(criteria, charset)
+            return self.search_seq(criteria, charset)
 
 
-    def fetch_smart(self, message_list, message_parts='(FLAGS)' ):
+    def fetch(self, message_list, message_parts='(FLAGS)' ):
         self._checkUid()
 
-        if self.as_uid:
+        if self.has_uid:
             return self.fetch_uid( message_list, message_parts )
         else:
-            return self.fetch( message_list, message_parts )
+            return self.fetch_seq( message_list, message_parts )
 
-    def thread_smart(self, thread_alg, charset, search_criteria):
+    def thread(self, thread_alg, charset, search_criteria):
         self._checkUid()
-        if self.as_uid:
+        if self.has_uid:
             return self.thread_uid(thread_alg, charset, search_criteria)
         else:
-            return self.thread(thread_alg, charset, search_criteria)
+            return self.thread_seq(thread_alg, charset, search_criteria)
 
 if __name__ == '__main__':
     import getopt, getpass, sys
