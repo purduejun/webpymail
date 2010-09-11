@@ -71,8 +71,7 @@ def show_message_list_view(request, folder=settings.DEFAULT_FOLDER):
 
     # Message action form
     raw_message_list = [ (uid,uid) for uid in message_list.flat_message_list ]
-    form_data = { 'folder': folder.url() }
-    form = MessageActionForm(data=form_data,  message_list=raw_message_list)
+    form = MessageActionForm(data={}, message_list=raw_message_list, server=M)
 
     # If it's a POST request
     if request.method == 'POST':

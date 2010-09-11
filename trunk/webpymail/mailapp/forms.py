@@ -194,12 +194,26 @@ class ComposeMailForm(forms.Form):
 
     saved_files = MultyChecksum( required = False, widget = forms.HiddenInput())
 
+MESSAGE_ACTIONS = ( (0, _('Choose one action')),
+                    (1, _('Mark read')),
+                    (2, _('Mark unread')),
+                    (3, _('Delete')),
+                    (4, _('Undelete')), )
+
 class MessageActionForm(forms.Form):
     def __init__(self, *args, **kwargs):
         message_list = kwargs.pop('message_list')
+        server = kwargs.pop('server')
         super(MessageActionForm, self).__init__(*args, **kwargs)
 
         # Populate the identity choices
         self.fields['messages'].choices = message_list
 
+        # And the folder list
+        server.folder_iterator = 'iter_all'
+        server.refresh_folders()
+        self.fields['folder'].choices = [ (folder.url(), "%s%s" % ( '__' * folder.level(), folder.unicode_name())) for folder in server ]
+
     messages = forms.MultipleChoiceField(widget=forms.CheckboxSelectMultiple)
+    action   = forms.ChoiceField(choices=MESSAGE_ACTIONS)
+    folder   = forms.ChoiceField()

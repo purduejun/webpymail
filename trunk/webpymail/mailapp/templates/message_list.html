@@ -33,10 +33,11 @@
 <form method="post" action="{% url message_list folder.url %}">
 
 <div class="message_actions">
-<input type="submit" name="read" value="{% trans "Mark Read" %}" />
-<input type="submit" name="unread" value="{% trans "Mark Unread" %}" />
-<input type="submit" name="delete" value="{% trans "Delete" %}" />
-<input type="submit" name="undelete" value="{% trans "Undelete" %}" />
+{{ form.action }}
+<input type="submit" name="apply" value="{% trans "Apply" %}"> |
+{{ form.folder }}
+<input type="submit" name="move" value="{% trans "Move" %}">
+<input type="submit" name="copy" value="{% trans "Copy" %}"> |
 </div>
 
 {% include "inc_page_nav.html" %}
