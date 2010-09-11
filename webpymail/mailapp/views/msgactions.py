@@ -28,6 +28,7 @@
 """
 
 # Global Imports
+import base64
 # Django:
 from django.http import Http404
 
@@ -41,6 +42,12 @@ ANSWERED = r'\Answered'
 FLAGGED = r'\Flagged'
 DRAFT = r'\Draft'
 RECENT = r'\Recent'
+
+# Actions
+MARK_READ = 1
+MARK_UNREAD = 2
+DELETE = 3
+UNDELETE = 4
 
 def message_change( request, message ):
     new_data = request.POST.copy()
@@ -61,7 +68,7 @@ def batch_change(request, folder, message_list):
         return
 
     # Validate the form
-    form = MessageActionForm(new_data, message_list=message_list)
+    form = MessageActionForm(new_data, message_list=message_list, server = folder.server)
     if not form.is_valid():
         # Do nothing if the form isn't valid
         return
@@ -72,14 +79,21 @@ def batch_change(request, folder, message_list):
     except:
         return
 
-    if new_data.has_key('delete'):
+    action = int(form.cleaned_data['action'])
+
+    if action == DELETE:
         folder.set_flags(selected_messages, DELETED)
-    elif new_data.has_key('undelete'):
+    elif action == UNDELETE:
         folder.reset_flags(selected_messages, DELETED)
-    elif new_data.has_key('read'):
+    elif action == MARK_READ:
         folder.set_flags(selected_messages, SEEN)
-    elif new_data.has_key('unread'):
+    elif action == MARK_UNREAD:
         folder.reset_flags(selected_messages, SEEN)
 
-
-
+    if new_data.has_key('move') or new_data.has_key('copy'):
+        if folder.url() == form.cleaned_data['folder']:
+            return
+        target_folder =  base64.urlsafe_b64decode(str(form.cleaned_data['folder']))
+        folder.copy(selected_messages, target_folder)
+        if new_data.has_key('move'):
+            folder.set_flags(selected_messages, DELETED)
