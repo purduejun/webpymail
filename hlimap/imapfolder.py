@@ -353,10 +353,13 @@ class Folder(object):
             self.message_list.refresh_messages()
 
     def set_flags(self, message_list, *args ):
-        return self._imap.store_smart(message_list, '+FLAGS.SILENT', args)
+        return self._imap.store(message_list, '+FLAGS.SILENT', args)
 
     def reset_flags(self, message_list, *args ):
-        return self._imap.store_smart(message_list, '-FLAGS.SILENT', args)
+        return self._imap.store(message_list, '-FLAGS.SILENT', args)
+
+    def copy(self, message_list, target):
+        return self._imap.copy(message_list, target)
 
     # Message list management
     def _get_message_list(self):
