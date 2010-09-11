@@ -30,6 +30,7 @@ from imaplib2.imapp import IMAP4P
 
 class NoFolderListError(Exception): pass
 class NoSuchFolder(Exception): pass
+class ServerError(Exception): pass
 
 class ImapServer(object):
     '''Establishes the server connection, and does the authentication.
@@ -59,6 +60,7 @@ class ImapServer(object):
         self.special_folders = []
         self.expand_list = []
         self.folder_tree = None
+        self.folder_iterator = 'iter_expand'
 
     # IMAP methods
     def login(self, username, password):
@@ -100,7 +102,7 @@ class ImapServer(object):
 
         self.folder_tree.sort()
 
-        self.set_iterator(self.folder_tree.iter_expand)
+        self.set_folder_iterator()
 
     def folder_iter(self):
         '''
@@ -109,10 +111,15 @@ class ImapServer(object):
         '''
         return self.folders()
 
-    def set_iterator(self, it):
+    def set_folder_iterator(self):
         '''Pre-defines the iterator to use on the folder tree. The available
         iterators are defined on FolderTree
         '''
+        try:
+            it = getattr(self.folder_tree, self.folder_iterator)
+        except AttributeError:
+            raise ServerError('Unknown iterator "%s"' % self.folder_iterator)
+
         if self.folder_tree:
             self.folders = it
         else:
