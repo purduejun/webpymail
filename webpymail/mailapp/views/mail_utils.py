@@ -162,13 +162,26 @@ def show_addrs( label, addr_list, default ):
 ##
 
 def compose_rfc822( from_addr, to_addr, cc_addr, bcc_addr,
-                subject, message_text, message_html, attachment_list = [] ):
+                subject, message_plain, message_html, attachment_list = [] ):
     '''
     Returns a rfc822 compliant message
     '''
-
     # Create the message text:
-    msg_text = MIMEText(message_text, _charset='utf-8')
+    if message_plain:
+        message_plain = MIMEText(message_plain, _charset='utf-8')
+    if message_html:
+        message_html = MIMEText(message_html.encode('utf-8'), _subtype = 'html', _charset='utf-8')
+
+    if message_plain and message_html:
+        msg_text = MIMEMultipart('alternative')
+        msg_text.attach(message_plain)
+        msg_text.attach(message_html)
+    elif message_plain:
+        msg_text = message_plain
+    elif message_html:
+        msg_text = message_html
+    else:
+        msg_text = MIMEText('', _charset='utf-8')
 
     # Include the attachments:
     if attachment_list.file_list:
