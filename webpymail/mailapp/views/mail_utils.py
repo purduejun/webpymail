@@ -248,7 +248,7 @@ def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None,
         s.starttls()
         s.ehlo()
     if user:
-        s.login(user, passwd)
+        s.login(user.encode('utf-8'), passwd.encode('utf-8'))
 
     to_addr_list = []
 
