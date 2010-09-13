@@ -1,4 +1,4 @@
-#summary Installation instructions
+﻿#summary Installation instructions
 #labels Featured
 
 <wiki:toc max_depth="3" />
@@ -12,7 +12,11 @@ Webpymail is still on its early development stages, it's not yet feature complet
 To test webpymail you need:
 
   # Django svn
-  # Python 2.5 (>= 2.6.5 for SSL SMTP server support)
+  # Python 2.5 (>= 2.6 for SSL SMTP server support)
+
+Please note that there is a bug that affected python versions 2.6 and 2.7 that makes SSL SMTP unusable, if you think you're affected by this consult:
+
+     http://bugs.python.org/issue4066
 
 = Installation =
 
