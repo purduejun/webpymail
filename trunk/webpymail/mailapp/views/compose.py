@@ -35,11 +35,18 @@ import re
 import base64
 from smtplib import SMTPRecipientsRefused, SMTPException
 
+try:
+    import markdown
+    HAS_MARKDOWN = True
+except ImportError:
+    HAS_MARKDOWN = False
+
 # Django
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
+from django.utils.encoding import smart_unicode
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 
@@ -49,6 +56,11 @@ from mail_utils import serverLogin, send_mail, join_address_list, mail_addr_str,
 from webpymail.utils.config import config_from_request
 
 from mailapp.forms import ComposeMailForm
+
+# CONST
+
+PLAIN = 1
+MARKDOWN = 2
 
 # RE
 
@@ -182,8 +194,16 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
             cc_addr    = join_address_list( form_data['cc_addr'] )
             bcc_addr   = join_address_list( form_data['bcc_addr'] )
 
+            text_format = form_data['text_format']
             message_text = form_data['message_text']
-            message_html = None
+
+            if text_format == MARKDOWN and HAS_MARKDOWN:
+                md = markdown.Markdown(output_format='HTML')
+                message_html = md.convert(smart_unicode(message_text))
+                # TODO: use a template to get the html and insert the css
+                message_html = '<html>\n<body>\n%s\n</body>\n</html>' % message_html
+            else:
+                message_html = None
 
             message = compose_rfc822( from_addr, to_addr, cc_addr, bcc_addr,
                 subject, message_text, message_html, uploaded_files )

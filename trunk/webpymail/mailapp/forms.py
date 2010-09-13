@@ -39,6 +39,12 @@ import re
 from utils.config import  config_from_request, user_identities
 from multifile import *
 
+try:
+    import markdown
+    HAS_MARKDOWN = True
+except ImportError:
+    HAS_MARKDOWN = False
+
 # Mail form exceptions
 
 class MAILFORMERROR ( Exception ):
@@ -171,9 +177,14 @@ class ComposeMailForm(forms.Form):
         required=False
         )
 
-    filter       = forms.ChoiceField(
-        choices = ((1,_('Plain')),(2,_('reST'))),
-        label = _('Filter'), )
+    if HAS_MARKDOWN:
+        text_format  = forms.TypedChoiceField(
+                coerce = int,
+                choices = ((1,_('Plain')),(2,_('Markdown'))),
+                label = _('Format'), )
+    else:
+        text_format = forms.IntegerField(initial=1,
+                widget = forms.HiddenInput())
 
     subject      = forms.CharField(
         max_length=100,
