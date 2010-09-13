@@ -48,10 +48,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.message import MIMEMessage
 from email import message_from_file
 
-HAS_SMTP_SSL = sys.version_info[0] == 2 and sys.version_info[1] >= 6 and sys.version_info[2] >= 5
-if HAS_SMTP_SSL:
+HAS_SMTP_SSL = False
+try:
     from smtplib import SMTPRecipientsRefused, SMTPException, SMTP, SMTP_SSL
-else:
+    HAS_SMTP_SSL = True
+except ImportError:
     from smtplib import SMTPRecipientsRefused, SMTPException, SMTP
 
 # Mail
@@ -236,7 +237,7 @@ def send_mail( message,  smtp_host, smtp_port, user = None, passwd = None,
     '''
     if security == 'SSL':
         if not HAS_SMTP_SSL:
-            raise Exception('Sorry. For SMTP_SSL support you need Python >= 2.6.5')
+            raise Exception('Sorry. For SMTP_SSL support you need Python >= 2.6')
         s = SMTP_SSL(smtp_host, smtp_port)
     else:
         s = SMTP(smtp_host, smtp_port)
