@@ -28,6 +28,7 @@
 """
 
 # Global imports:
+from django.conf import settings
 from django.conf.urls.defaults import patterns, include, url
 from django.contrib import admin
 
@@ -51,9 +52,10 @@ urlpatterns = patterns('',
         name='not_implemented'),
 )
 
-urlpatterns += patterns('',
-    # DEVELOPMENT
-    # The site wide media folder:
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve',
-     {'document_root': 'media/'}),
-)
+if settings.DEBUG:
+    urlpatterns += patterns('',
+        # DEVELOPMENT
+        # The site wide media folder:
+        (r'^media/(?P<path>.*)$', 'django.views.static.serve',
+        {'document_root': 'media/'}),
+    )
