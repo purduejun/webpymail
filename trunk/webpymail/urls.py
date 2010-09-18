@@ -41,6 +41,9 @@ urlpatterns = patterns('',
     # Mail Interface:
     (r'^mail/', include('webpymail.mailapp.urls')),
 
+    # Address book:
+    (r'^ab/', include('webpymail.sabapp.urls')),
+
     # Authentication interface:
     (r'^auth/', include('webpymail.wpmauth.urls')),
 

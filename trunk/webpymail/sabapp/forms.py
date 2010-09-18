@@ -24,16 +24,11 @@
 # $Id$
 #
 
-from django.conf.urls.defaults import patterns, url
+from django import forms
 
-# Manage:
-urlpatterns = patterns('sabapp.views',
-    url(r'^add/$', 'manage_address', name='add_address'),
-    url(r'^edit/(?P<address_id>\d+)/$', 'manage_address', name='edit_address'),
-    url(r'^del/(?P<address_id>\d+)/$', 'delete_address', name='delete_address'),
-    )
+from models import Address
 
-# Browse:
-urlpatterns += patterns('sabapp.views',
-    url(r'^$', 'browse_addresses', name='browse_addresses'),
-    )
+class AddressForm(forms.ModelForm):
+    class Meta:
+        model = Address
+        exclude = ('user','imap_server','ab_type')

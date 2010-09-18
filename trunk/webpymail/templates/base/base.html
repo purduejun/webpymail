@@ -19,7 +19,8 @@
     {% block extra_menus %}{% endblock %}
     {# <a href="{% url mailapp_send_message folder=folder.folder %}">{% trans "Compose" %}</a>&nbsp;&nbsp; #}
     <a href="{% url not_implemented %}">{% trans "Search" %}</a>&nbsp;&nbsp;
-    <a href="{% url not_implemented %}">{% trans "Manage Folders" %}</a>
+    <a href="{% url not_implemented %}">{% trans "Manage Folders" %}</a>&nbsp;&nbsp;
+    <a href="{% url browse_addresses %}">{% trans "Addresses" %}</a>
 </div>
 
 <!-- The Main Body -->

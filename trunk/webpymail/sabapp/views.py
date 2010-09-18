@@ -23,3 +23,77 @@
 #
 # $Id$
 #
+
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from django.http import Http404
+from django.shortcuts import render_to_response, redirect
+
+from forms import AddressForm
+from models import Address
+
+# Views:
+
+@login_required
+def delete_address(request, address_id ):
+    try:
+        address = Address.objects.get( id = int(address_id),
+            user = request.user, ab_type = 1 )
+    except ObjectDoesNotExist:
+        raise Http404
+
+    address.delete()
+
+    return redirect('browse_addresses')
+
+@login_required
+def manage_address(request, address_id = None):
+    '''Add an address to the user's address book'''
+    context = {}
+
+    if address_id:
+        try:
+            address = Address.objects.get( id = int(address_id),
+                user = request.user, ab_type = 1 )
+        except ObjectDoesNotExist:
+            raise Http404
+
+    if request.method == 'POST':
+        if  request.POST.has_key('cancel'):
+            return redirect('browse_addresses')
+        if address_id:
+            form = AddressForm(request.POST, instance = address)
+        else:
+            form = AddressForm(request.POST)
+        if form.is_valid():
+            # Save the new address
+            address = form.save(commit=False)
+            address.user = request.user
+            address.imap_server = request.session['host']
+            address.ab_type = 1
+            address.save()
+            return redirect('browse_addresses')
+        else:
+            # Show errors:
+            context['form'] = form
+    else:
+        # Empty form
+        if address_id:
+            context['form'] = AddressForm(instance = address)
+        else:
+            context['form'] = AddressForm()
+
+    return render_to_response('manage_address.html', context )
+
+@login_required
+def browse_addresses(request):
+    host = request.session['host']
+
+    address_list = Address.objects.filter(
+        Q( user__exact = request.user, imap_server__exact = host, ab_type__exact = 1 ) |
+        Q( imap_server__exact = host, ab_type__exact = 2 ) |
+        Q( ab_type__exact = 3 ) ).order_by('first_name', 'last_name')
+
+    return render_to_response('browse_addresses.html',
+        { 'address_list': address_list } )

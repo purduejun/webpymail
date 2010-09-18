@@ -26,6 +26,15 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils.translation import gettext_lazy as _
+
+# Models:
+
+ADDRESSBOOKTYPE = (
+    (1, _('User address book')),
+    (2, _('Server address book')),
+    (3, _('Site address book')),
+    )
 
 class Address(models.Model):
     user = models.ForeignKey(User, null=True)
@@ -33,14 +42,21 @@ class Address(models.Model):
 
     nickname = models.CharField(max_length=64)
     first_name = models.CharField(_('first name'), max_length=30, blank = True)
-    last_name = models.CharField(_('last name'), max_length=64)
+    last_name = models.CharField(_('last name'), max_length=64, blank = True)
     email = models.EmailField(_('e-mail address'))
     additional_info = models.CharField(_('aditional information'),
         max_length=128, blank = True)
 
-    public = models.BooleanField( default=False )
-    public_in_site = models.BooleanField( default=False )
+    ab_type = models.IntegerField(choices=ADDRESSBOOKTYPE)
 
     class Meta:
         verbose_name = _('Address')
         verbose_name_plural = _('Addresses')
+
+        db_table = 'address_book'
+
+        unique_together = (('user', 'imap_server', 'nickname',
+            'ab_type'),)
+
+    def __str__(self):
+        return '"%s %s" <%s>' % (self.first_name, self.last_name, self.email)

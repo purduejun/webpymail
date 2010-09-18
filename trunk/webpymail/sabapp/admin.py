@@ -24,16 +24,12 @@
 # $Id$
 #
 
-from django.conf.urls.defaults import patterns, url
+"""Django administrative interface
+"""
 
-# Manage:
-urlpatterns = patterns('sabapp.views',
-    url(r'^add/$', 'manage_address', name='add_address'),
-    url(r'^edit/(?P<address_id>\d+)/$', 'manage_address', name='edit_address'),
-    url(r'^del/(?P<address_id>\d+)/$', 'delete_address', name='delete_address'),
-    )
+# Imports:
+# Django
+from django.contrib import admin
+from webpymail.sabapp.models import Address
 
-# Browse:
-urlpatterns += patterns('sabapp.views',
-    url(r'^$', 'browse_addresses', name='browse_addresses'),
-    )
+admin.site.register(Address)

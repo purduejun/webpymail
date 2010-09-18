@@ -100,6 +100,7 @@ INSTALLED_APPS = (
     # WebPyMail apps
     'webpymail.wpmauth',
     'webpymail.mailapp',
+    'webpymail.sabapp'
 )
 
 ######################
