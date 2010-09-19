@@ -139,7 +139,7 @@ class UploadFiles:
             attachment.save()
             self.file_list.append(attachment)
 
-def send_message(request, text='', to_addr='', cc_addr='', subject='',
+def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subject='',
     attachments=''):
     '''Generic send message view
     '''
@@ -148,8 +148,9 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
         other_action = False
 
         old_files = []
-        if new_data['saved_files']:
-            old_files = new_data['saved_files'].split(',')
+        if new_data.has_key('saved_files'):
+            if new_data['saved_files']:
+                old_files = new_data['saved_files'].split(',')
 
         uploaded_files = UploadFiles( request.user,
             old_files = old_files,
@@ -252,10 +253,11 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
                 'uploaded_files': uploaded_files })
 
     else:
-        initial= { 'filter': 1,
+        initial= { 'text_format': 1,
                    'message_text': text,
                    'to_addr': to_addr,
                    'cc_addr': cc_addr,
+                   'bcc_addr': bcc_addr,
                    'subject': subject,
                    'saved_files': attachments }
 
@@ -272,7 +274,18 @@ def send_message(request, text='', to_addr='', cc_addr='', subject='',
 
 @login_required
 def new_message( request ):
-    return send_message(request)
+    if request.method == 'GET':
+        to_addr = request.GET.get('to_addr', '')
+        cc_addr = request.GET.get('cc_addr', '')
+        bcc_addr = request.GET.get('bcc_addr', '')
+        subject = request.GET.get('subject', '')
+    else:
+        to_addr = ''
+        cc_addr = ''
+        bcc_addr = ''
+        subject = ''
+    return send_message(request, to_addr=to_addr, cc_addr=cc_addr,
+        bcc_addr=bcc_addr, subject=subject)
 
 @login_required
 def reply_message(request, folder, uid):
@@ -364,7 +377,6 @@ def forward_message(request, folder, uid):
 
     return send_message( request, subject=subject,
         attachments='%d' % attachment.id)
-
 
 @login_required
 def forward_message_inline(request, folder, uid):
