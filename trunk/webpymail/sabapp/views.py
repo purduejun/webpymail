@@ -24,13 +24,16 @@
 # $Id$
 #
 
+import urllib
+
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
+from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect
+from django.views.decorators.http import require_POST
 
-from forms import AddressForm
+from forms import AddressForm, ComposeToForm
 from models import Address
 
 # Views:
@@ -88,12 +91,28 @@ def manage_address(request, address_id = None):
 
 @login_required
 def browse_addresses(request):
-    host = request.session['host']
-
-    address_list = Address.objects.filter(
-        Q( user__exact = request.user, imap_server__exact = host, ab_type__exact = 1 ) |
-        Q( imap_server__exact = host, ab_type__exact = 2 ) |
-        Q( ab_type__exact = 3 ) ).order_by('first_name', 'last_name')
+    address_list = Address.objects.for_request(request).order_by('first_name',
+        'last_name')
 
     return render_to_response('browse_addresses.html',
         { 'address_list': address_list } )
+
+
+@login_required
+@require_POST
+def compose_to_addresses(request):
+    form = ComposeToForm(request.POST, request = request)
+    if form.is_valid():
+        to_addr    = form.cleaned_data['to_addr'].encode('utf-8')
+        cc_addr    = form.cleaned_data['cc_addr'].encode('utf-8')
+        bcc_addr   = form.cleaned_data['bcc_addr'].encode('utf-8')
+
+        if to_addr or cc_addr or bcc_addr:
+            query = urllib.urlencode( { 'to_addr': to_addr,
+                                        'cc_addr': cc_addr,
+                                        'bcc_addr': bcc_addr,})
+            return redirect( '%s?%s' % (reverse('mailapp_send_message'), query))
+        else:
+            return redirect('browse_addresses')
+    else:
+        return redirect('browse_addresses')
