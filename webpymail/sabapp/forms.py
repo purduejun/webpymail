@@ -32,3 +32,27 @@ class AddressForm(forms.ModelForm):
     class Meta:
         model = Address
         exclude = ('user','imap_server','ab_type')
+
+class ComposeToForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request')
+        super(ComposeToForm, self).__init__(*args, **kwargs)
+
+        address_list = Address.objects.for_request(request)
+        choices = [ (address.id,address.id) for address in address_list ]
+        self.choices = choices
+        self.fields['to_addr'].choices = choices
+        self.fields['cc_addr'].choices = choices
+        self.fields['bcc_addr'].choices = choices
+
+    def clean(self):
+        for key in self.cleaned_data.iterkeys():
+            self.cleaned_data[key] = ','.join(
+                [ Address.objects.get(id=int(item)).mail_addr()
+                    for item in self.cleaned_data[key]]
+                )
+        return self.cleaned_data
+
+    to_addr = forms.MultipleChoiceField(required=False)
+    cc_addr = forms.MultipleChoiceField(required=False)
+    bcc_addr = forms.MultipleChoiceField(required=False,widget=forms.CheckboxSelectMultiple)

@@ -36,4 +36,5 @@ urlpatterns = patterns('sabapp.views',
 # Browse:
 urlpatterns += patterns('sabapp.views',
     url(r'^$', 'browse_addresses', name='browse_addresses'),
+    url(r'^compose/$', 'compose_to_addresses', name='compose_to_addresses'),
     )
