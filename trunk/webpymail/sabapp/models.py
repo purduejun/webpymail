@@ -26,6 +26,7 @@
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 
 # Models:
@@ -35,6 +36,15 @@ ADDRESSBOOKTYPE = (
     (2, _('Server address book')),
     (3, _('Site address book')),
     )
+
+class AddressManager(models.Manager):
+    def for_request(self, request):
+        '''Addresses available for request'''
+        host = request.session['host']
+        return super(AddressManager, self).get_query_set().filter(
+            Q( user__exact = request.user, imap_server__exact = host, ab_type__exact = 1 ) |
+            Q( imap_server__exact = host, ab_type__exact = 2 ) |
+            Q( ab_type__exact = 3 ) )
 
 class Address(models.Model):
     user = models.ForeignKey(User, null=True)
@@ -49,6 +59,8 @@ class Address(models.Model):
 
     ab_type = models.IntegerField(choices=ADDRESSBOOKTYPE)
 
+    objects = AddressManager()
+
     class Meta:
         verbose_name = _('Address')
         verbose_name_plural = _('Addresses')
@@ -58,5 +70,14 @@ class Address(models.Model):
         unique_together = (('user', 'imap_server', 'nickname',
             'ab_type'),)
 
+    def full_name(self):
+        return ('%s %s' % (self.first_name, self.last_name)).strip()
+
+    def mail_addr(self):
+        if self.first_name or self.last_name:
+            return '"%s %s" <%s>' % (self.first_name, self.last_name, self.email)
+        else:
+            return self.email
+
     def __str__(self):
-        return '"%s %s" <%s>' % (self.first_name, self.last_name, self.email)
+        return self.mail_addr()
