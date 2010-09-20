@@ -198,11 +198,14 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
             text_format = form_data['text_format']
             message_text = form_data['message_text']
 
+            config = config_from_request( request )
+
             if text_format == MARKDOWN and HAS_MARKDOWN:
                 md = markdown.Markdown(output_format='HTML')
                 message_html = md.convert(smart_unicode(message_text))
+                css = config.get('message', 'css')
                 # TODO: use a template to get the html and insert the css
-                message_html = '<html>\n<body>\n%s\n</body>\n</html>' % message_html
+                message_html = '<html>\n<style>%s</style><body>\n%s\n</body>\n</html>' % (css, message_html)
             else:
                 message_html = None
 
@@ -210,8 +213,6 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
                 subject, message_text, message_html, uploaded_files )
 
             try:
-                config = config_from_request( request )
-
                 host = config.get('smtp', 'host')
                 port = config.getint('smtp', 'port')
                 user = config.get('smtp', 'user')
