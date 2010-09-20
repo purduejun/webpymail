@@ -187,3 +187,19 @@ port = 587
 security = TLS
 use_imap_auth = True
 }}}
+
+=== Message ===
+
+Message related settings:
+
+ * *css* - (default: empty) you can define here CSS to be used on Markdown generated messages.
+
+CSS definition example:
+
+{{{
+[message]
+
+css = body {
+	color: black;
+	background: whitesmoke; }
+}}}
