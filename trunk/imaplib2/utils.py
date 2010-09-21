@@ -32,6 +32,7 @@
 import time, datetime
 import re
 from email.header import decode_header
+from email.errors import HeaderParseError
 
 # Utility functions
 def getUnicodeHeader( header ):
@@ -43,7 +44,17 @@ def getUnicodeHeader( header ):
     # Decode the header:
     header_list = []
 
-    for header in decode_header(header):
+    try:
+        decoded_header = decode_header(header)
+    except HeaderParseError:
+        # This is necessary to deal with bug 22
+        try:
+            decoded_header = decode_header(header.replace('?==?', '?= =?'))
+        except:
+            # If unable to decode the header, return it unchanged
+            return header
+
+    for header in decoded_header:
         if not header[1]:
             codec = 'iso-8859-1'
         else:
