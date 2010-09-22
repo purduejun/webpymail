@@ -54,6 +54,9 @@ urlpatterns += patterns('mailapp.views.message',
     url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/(?P<part_number>\d+(?:\.\d+)*)/$',
         'get_msg_part', name='mailapp_message_part'),
 
+    url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/(?P<part_number>\d+(?:\.\d+)*)/inline/$',
+        'get_msg_part_inline', name='mailapp_mpart_inline'),
+
     url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/HEADER/$',
         'message_header', name='mailapp_message_header'),
 

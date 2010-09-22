@@ -154,30 +154,39 @@
     {% endif %} {# End of embeded message #}
 
     {% if part.is_attachment %}
-<div class="attach_link">
-<table>
-    <tr>
-        <th>{% trans "Part number:" %}</th>
-        <td>{{ part.part_number }}</td>
-    </tr>
-    <tr>
-        <th>{% trans "Mime type:" %}</th>
-        <td>{{ part.media }}/{{part.media_subtype}}</td>
-    </tr>
-    <tr>
-        <th>{% trans "File Name:" %}</th>
-        <td>{% if part.filename %}{{ part.filename }}{% else %}{% trans "Unknown" %}{% endif %}</td>
-    </tr>
-    <tr>
-        <th>{% trans "Size:" %}</th>
-        <td>{{ part.body_fld_octets }} {% trans "B" %}</td>
-    </tr>
-    <tr>
-        <th colspan=2><!-- TODO: {# {% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %} #}-->
-<a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">{% trans "Download" %}</a></th>
-    </tr>
-</table>
-</div>
+      {% if inline_img and part.media == "IMAGE" %}
+        <p>
+          <img src="{% url mailapp_mpart_inline folder=folder.url,uid=message.uid,part_number=part.part_number %}" width="750"><br>
+          <a href="{% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %}">{% trans "Download" %}{% if part.filename %} {{ part.filename }}{% endif %}</a>
+        </p>
+      {% else %}
+        <div class="attach_link">
+        <table>
+            <tr>
+                <th>{% trans "Part number:" %}</th>
+                <td>{{ part.part_number }}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Mime type:" %}</th>
+                <td>{{ part.media }}/{{part.media_subtype}}</td>
+            </tr>
+            <tr>
+                <th>{% trans "File Name:" %}</th>
+                <td>{% if part.filename %}{{ part.filename }}{% else %}{% trans "Unknown" %}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>{% trans "Size:" %}</th>
+                <td>{{ part.body_fld_octets }} {% trans "B" %}</td>
+            </tr>
+            <tr>
+                <th colspan=2>
+                  <a href="{% url mailapp_mpart_inline folder=folder.url,uid=message.uid,part_number=part.part_number %}">{% trans "View on-line" %}</a> |
+                  <a href="{% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %}">{% trans "Download" %}</a>
+                </th>
+            </tr>
+        </table>
+        </div>
+      {% endif %}
     {% endif %}
 {% endfor %}
 
