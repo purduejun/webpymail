@@ -350,10 +350,15 @@ class Folder(object):
     def expunge(self):
         self._imap.expunge()
         if self.__message_list:
+            self._imap.sstatus['current_folder']['expunge_list'] = []
             self.message_list.refresh_messages()
 
     def set_flags(self, message_list, *args ):
-        return self._imap.store(message_list, '+FLAGS.SILENT', args)
+        response = self._imap.store(message_list, '+FLAGS.SILENT', args)
+        if self._imap.expunged() and self.__message_list:
+            # Some servers expunge the messages when we mark a message deleted!
+            self._imap.reset_expunged()
+            self.message_list.refresh_messages()
 
     def reset_flags(self, message_list, *args ):
         return self._imap.store(message_list, '-FLAGS.SILENT', args)
