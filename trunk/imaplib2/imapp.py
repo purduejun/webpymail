@@ -192,6 +192,22 @@ class IMAP4P:
             self.logout()
             self.shutdown()
 
+    # Utility methods
+
+    def expunged(self):
+        '''Returns true if we have recently expunged messages
+        '''
+        if self.sstatus['current_folder'].has_key('expunge_list'):
+            if self.sstatus['current_folder']['expunge_list']:
+                return True
+        return False
+
+    def reset_expunged(self):
+        '''Resets the currently expunged message list
+        '''
+        if self.sstatus['current_folder'].has_key('expunge_list'):
+            self.sstatus['current_folder']['expunge_list'] = []
+
     ##
     # Response parsing
     ##
@@ -324,6 +340,16 @@ class IMAP4P:
         self.sstatus['current_folder']['EXISTS'] = int(args)
 
     def EXPUNGE_response(self, code, args):
+        if not self.sstatus['current_folder'].has_key('expunge_list'):
+            # Google's IMAP produces untagged EXPUNGE responses with the STORE
+            # command (it should not it seems)
+            # Gmail automatically expunges the messages when they are marked
+            # deleted.
+            # C: JBNG008 UID STORE 1144 +FLAGS.SILENT (\Deleted)<cr><lf>
+            # S: * 77 EXPUNGE<cr><lf>
+            # S: * 76 EXISTS<cr><lf>
+            # S: JBNG008 OK Success<cr><lf>
+            self.sstatus['current_folder']['expunge_list'] = []
         self.sstatus['current_folder']['expunge_list'].append(int(args))
 
     def FETCH_response(self, code, args):
