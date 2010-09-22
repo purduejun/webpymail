@@ -32,7 +32,7 @@ import base64
 # Django:
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
@@ -40,6 +40,9 @@ from django.conf import settings
 # Local
 from mail_utils import serverLogin
 import msgactions
+
+import hlimap
+
 
 @login_required
 def show_message(request, folder, uid):
@@ -53,7 +56,10 @@ def show_message(request, folder, uid):
 
     # If it's a POST request
     if request.method == 'POST':
-        msgactions.message_change( request, message )
+        try:
+            msgactions.message_change( request, message )
+        except hlimap.imapmessage.MessageNotFound:
+            return redirect('message_list', folder=folder.url() )
 
     return render_to_response('message_body.html',{'folder':folder,
         'message':message})
