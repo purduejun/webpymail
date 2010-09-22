@@ -374,7 +374,7 @@ def forward_message(request, folder, uid):
     attachment.save()
 
     # Gather some message info
-    subject = _('Fwd: ') + message.envelope['env_subject']
+    subject = _('Fwd: ') + message.envelope['env_subject'].decode('utf-8')
 
     return send_message( request, subject=subject,
         attachments='%d' % attachment.id)
@@ -389,7 +389,7 @@ def forward_message_inline(request, folder, uid):
         text += show_addrs( _('To'), message.envelope['env_to'], _('-') )
         text += show_addrs( _('Cc'), message.envelope['env_cc'], _('-') )
         text += _('Date: ') + message.envelope['env_date'].strftime('%Y-%m-%d %H:%M') + '\n'
-        text += _('Subject: ') + message.envelope['env_subject']+ '\n\n'
+        text += _('Subject: ') + message.envelope['env_subject'].decode('utf-8') + '\n\n'
 
         return text
 
@@ -444,7 +444,7 @@ def forward_message_inline(request, folder, uid):
             attach_list.append(attachment.id)
 
     # Gather some message info
-    subject = _('Fwd: ') + message.envelope['env_subject']
+    subject = _('Fwd: ') + message.envelope['env_subject'].decode('utf-8')
 
     return send_message( request, subject=subject, text = text,
         attachments=','.join([ '%d' % Xi for Xi in attach_list ]) )
