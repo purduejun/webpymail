@@ -39,6 +39,7 @@ from django.conf import settings
 
 # Local
 from mail_utils import serverLogin
+from webpymail.utils.config import config_from_request
 import msgactions
 
 import hlimap
@@ -48,6 +49,8 @@ import hlimap
 def show_message(request, folder, uid):
     '''Show the message
     '''
+    config = config_from_request( request )
+
     folder_name =  base64.urlsafe_b64decode(str(folder))
 
     M = serverLogin( request )
@@ -62,7 +65,8 @@ def show_message(request, folder, uid):
             return redirect('message_list', folder=folder.url() )
 
     return render_to_response('message_body.html',{'folder':folder,
-        'message':message})
+        'message':message,
+        'inline_img': config.getboolean('message', 'show_images_inline')})
 
 @login_required
 def message_header( request, folder, uid ):
@@ -91,7 +95,7 @@ def message_structure( request, folder, uid ):
         'message':message})
 
 @login_required
-def get_msg_part( request, folder, uid, part_number ):
+def get_msg_part( request, folder, uid, part_number, inline = False ):
     '''Gets a message part.
     '''
     folder_name =  base64.urlsafe_b64decode(str(folder))
@@ -108,12 +112,19 @@ def get_msg_part( request, folder, uid, part_number ):
     else:
         filename = _('Unknown')
 
-    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    if inline:
+        response['Content-Disposition'] = 'inline; filename=%s' % filename
+    else:
+        response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    response['Content-Type'] = '%s/%s' % (part.media, part.media_subtype)
 
     response.write( message.part(part) )
     response.close()
 
     return response
+
+def get_msg_part_inline( request, folder, uid, part_number ):
+    return get_msg_part( request, folder, uid, part_number, True )
 
 def not_implemented(request):
     return render_to_response('not_implemented.html')
