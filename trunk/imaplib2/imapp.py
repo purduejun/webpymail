@@ -202,6 +202,13 @@ class IMAP4P:
                 return True
         return False
 
+    def is_expunged(self, ID ):
+        '''Returns True if message id is expunged
+        '''
+        if self.sstatus['current_folder'].has_key('expunge_list'):
+            return ID in self.sstatus['current_folder']['expunge_list']
+        return False
+
     def reset_expunged(self):
         '''Resets the currently expunged message list
         '''
@@ -363,6 +370,7 @@ class IMAP4P:
 
         # Parse the response:
         response = FetchParser(args[fresp.end():])
+        response['ID'] = msg_num
         if response.has_key('UID'):
             # If UIDPLUS capability, index mes by uid
             self.sstatus['fetch_response'][response['UID']] = response
