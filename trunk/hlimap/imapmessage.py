@@ -543,6 +543,7 @@ class Message(object):
         self.envelope = msg_info['ENVELOPE']
         self.size = msg_info['RFC822.SIZE']
         self.uid = msg_info['UID']
+        self.id = msg_info['ID']
         self.get_flags( msg_info['FLAGS'] )
         self.internaldate = msg_info['INTERNALDATE']
 
@@ -616,6 +617,13 @@ class Message(object):
 
     def set_flags(self, *args ):
         self._imap.store(self.uid, '+FLAGS', args)
+        if self._imap.expunged():
+           # The message might have been expunged
+           if self._imap.is_expunged(self.id):
+               # The message no longer exists
+               self._imap.reset_expunged()
+               raise MessageNotFound('The message was expunged, Google IMAP does this...')
+
         self.get_flags( self._imap.sstatus['fetch_response'][self.uid]['FLAGS'] )
 
     def reset_flags(self, *args ):

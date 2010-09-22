@@ -350,7 +350,7 @@ class Folder(object):
     def expunge(self):
         self._imap.expunge()
         if self.__message_list:
-            self._imap.sstatus['current_folder']['expunge_list'] = []
+            self._imap.reset_expunged()
             self.message_list.refresh_messages()
 
     def set_flags(self, message_list, *args ):
