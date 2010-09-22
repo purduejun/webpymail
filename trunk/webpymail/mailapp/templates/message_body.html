@@ -153,7 +153,7 @@
         {% endif %}
     {% endif %} {# End of embeded message #}
 
-    {% if part.is_attachment %}
+    {% if part.is_attachment and not part.is_encapsulated %}
       {% if inline_img and part.media == "IMAGE" %}
         <p>
           <img src="{% url mailapp_mpart_inline folder=folder.url,uid=message.uid,part_number=part.part_number %}" width="750"><br>
