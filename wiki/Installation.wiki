@@ -203,3 +203,5 @@ css = body {
 	color: black;
 	background: whitesmoke; }
 }}}
+
+ * *show_images_inline* - (default: False) if true the images attached are displayed in-line.
