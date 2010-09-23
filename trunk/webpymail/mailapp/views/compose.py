@@ -196,7 +196,7 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
             bcc_addr   = join_address_list( form_data['bcc_addr'] )
 
             text_format = form_data['text_format']
-            message_text = form_data['message_text']
+            message_text = form_data['message_text'].encode('utf-8')
 
             config = config_from_request( request )
 
