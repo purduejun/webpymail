@@ -330,7 +330,7 @@ def reply_all_message(request, folder, uid):
     cc_addr =  join_address_list(message.envelope['env_to']+
         message.envelope['env_cc'])
 
-    subject = _('Re: ') + message.envelope['env_subject']
+    subject = _('Re: ') + message.envelope['env_subject'].decode('utf-8')
 
     # Extract the message text
     text = ''
@@ -340,7 +340,7 @@ def reply_all_message(request, folder, uid):
 
     # Quote the message
     text = quote_wrap_lines(text)
-    text = (mail_addr_name_str(message.envelope['env_from'][0][1]) +
+    text = (mail_addr_name_str(message.envelope['env_from'][0]) +
         _(' wrote:\n') + text)
 
     # Invoque the compose message form
@@ -413,13 +413,13 @@ def forward_message_inline(request, folder, uid):
                 text += '\n\n' + _('Encapsuplated Message').center(40,'-') + '\n'
                 text += message_header( part )
             else:
-                text += '\n' + _('End Encapsuplated Message').center(40,'-')
+                text += '\n' + _('End Encapsuplated Message').center(40,'-') + '\n'
     text += _('End Forwarded Message').center(40,'-') + '\n'
 
     # Extract the message attachments
     attach_list = []
     for part in message.bodystructure.serial_message():
-        if part.is_attachment():
+        if part.is_attachment() and not part.is_encapsulated():
             # Create a temporary file
             fl = tempfile.mkstemp(suffix='.tmp', prefix='webpymail_',
                 dir=settings.TEMPDIR)
