@@ -27,6 +27,7 @@
 from django import template
 from django.template import resolve_variable
 from django.utils.translation import gettext_lazy as _
+from django.utils.html import escape
 
 register = template.Library()
 
@@ -76,7 +77,7 @@ class PartTextNode(template.Node):
         message =  resolve_variable(self.message, context)
         part = resolve_variable(self.part, context)
 
-        text = message.part( part )
+        text = escape(message.part( part ))
         text = html_url_re.sub( make_links, text)
         if part.media == 'TEXT' and part.media_subtype == 'PLAIN':
             text = wrap_lines( text, 80 )
