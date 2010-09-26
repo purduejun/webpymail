@@ -30,12 +30,13 @@
 # Global Imports
 import base64
 # Django:
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response, redirect
-from django.core.urlresolvers import reverse
+from django.template import RequestContext
 from django.utils.translation import gettext_lazy as _
-from django.conf import settings
 
 # Local
 from mail_utils import serverLogin
@@ -66,7 +67,8 @@ def show_message(request, folder, uid):
 
     return render_to_response('message_body.html',{'folder':folder,
         'message':message,
-        'inline_img': config.getboolean('message', 'show_images_inline')})
+        'inline_img': config.getboolean('message', 'show_images_inline')},
+        context_instance=RequestContext(request))
 
 @login_required
 def message_header( request, folder, uid ):
@@ -79,7 +81,8 @@ def message_header( request, folder, uid ):
     message = folder[int(uid)]
 
     return render_to_response('message_header.html',{'folder':folder,
-        'message':message})
+        'message':message},
+        context_instance=RequestContext(request))
 
 @login_required
 def message_structure( request, folder, uid ):
@@ -92,7 +95,8 @@ def message_structure( request, folder, uid ):
     message = folder[int(uid)]
 
     return render_to_response('message_structure.html',{'folder':folder,
-        'message':message})
+        'message':message},
+        context_instance=RequestContext(request))
 
 @login_required
 def get_msg_part( request, folder, uid, part_number, inline = False ):
@@ -127,7 +131,8 @@ def get_msg_part_inline( request, folder, uid, part_number ):
     return get_msg_part( request, folder, uid, part_number, True )
 
 def not_implemented(request):
-    return render_to_response('not_implemented.html')
+    return render_to_response('not_implemented.html',
+        context_instance=RequestContext(request))
 
 @login_required
 def index(request):

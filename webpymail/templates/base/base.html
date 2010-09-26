@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <title>{% block title %}{% trans "WebPyMail" %}{% endblock %}</title>
-    <link href="/media/css/normal.css" rel="stylesheet" type="text/css"></link>
+    <link href="{{ MEDIA_URL }}css/normal.css" rel="stylesheet" type="text/css"></link>
     {% block headercontent %}{% endblock %}
 </head>
 <body>

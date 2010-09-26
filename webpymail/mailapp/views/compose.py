@@ -46,6 +46,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.shortcuts import render_to_response
+from django.template import RequestContext
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
@@ -231,16 +232,19 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
                      for Xi in detail.recipients ] )
                 return render_to_response('send_message.html', {'form':form,
                     'server_error': error_message,
-                    'uploaded_files': uploaded_files})
+                    'uploaded_files': uploaded_files},
+                    context_instance=RequestContext(request))
             except SMTPException, detail:
                 return render_to_response('send_message.html', {'form':form,
                     'server_error': '<p>%s' % detail,
-                    'uploaded_files': uploaded_files})
+                    'uploaded_files': uploaded_files},
+                    context_instance=RequestContext(request))
             except Exception, detail:
                 error_message = '<p>%s' % detail
                 return render_to_response('send_message.html', {'form':form,
                     'server_error': error_message,
-                    'uploaded_files': uploaded_files})
+                    'uploaded_files': uploaded_files},
+                    context_instance=RequestContext(request))
 
             # Store the message on the sent folder
             imap_store( request,user_profile.sent_folder, message )
@@ -251,7 +255,8 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
             return HttpResponseRedirect('/')
         else:
             return render_to_response('send_message.html', {'form':form,
-                'uploaded_files': uploaded_files })
+                'uploaded_files': uploaded_files },
+                    context_instance=RequestContext(request))
 
     else:
         initial= { 'text_format': 1,
@@ -271,7 +276,8 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
         form = ComposeMailForm(initial=initial,
             request = request )
         return render_to_response('send_message.html', {'form':form,
-            'uploaded_files': uploaded_files })
+            'uploaded_files': uploaded_files },
+            context_instance=RequestContext(request))
 
 @login_required
 def new_message( request ):
