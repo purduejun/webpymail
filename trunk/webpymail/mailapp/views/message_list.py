@@ -32,9 +32,10 @@
 import base64
 
 # Django
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
-from django.conf import settings
+from django.template import RequestContext
 
 # Local
 from mail_utils import serverLogin
@@ -94,4 +95,5 @@ def show_message_list_view(request, folder=settings.DEFAULT_FOLDER):
             'folder':folder,
             'paginator': folder.paginator(),
             'query':query,
-            'form':form })
+            'form':form },
+            context_instance=RequestContext(request))

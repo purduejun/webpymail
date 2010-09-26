@@ -33,9 +33,10 @@ import base64
 
 # Django
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 
 # Local
 from mailapp.models import FoldersToExpand
@@ -64,7 +65,8 @@ def show_folders_view(request):
     # Read the subscribed folder list:
     M.refresh_folders(subscribed=True)
 
-    return render_to_response('folder_list.html',{'server': M  })
+    return render_to_response('folder_list.html',{'server': M  },
+        context_instance=RequestContext(request))
 
 @login_required
 def set_folder_expand(request, folder):

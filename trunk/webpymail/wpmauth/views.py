@@ -28,11 +28,12 @@
 """
 
 # Global imports:
-from django.contrib.auth import authenticate, login, logout
-from django.shortcuts import render_to_response, HttpResponse
-from django.http import HttpResponseRedirect
-from django.utils.translation import gettext_lazy as _
 from django.conf import settings
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response, HttpResponse
+from django.template import RequestContext
+from django.utils.translation import gettext_lazy as _
 
 # Local imports:
 from forms import LoginForm
@@ -57,7 +58,8 @@ def loginView(request):
                 return render_to_response('wpmauth/login.html',
                     { 'form': form,
                       'error_message': _('Invalid server. '\
-                          'Please try again.') })
+                          'Please try again.') },
+                    context_instance=RequestContext(request))
             try:
                 user = authenticate(username=username[:30],
                     password=password, host=host, port=port, ssl=ssl)
@@ -65,7 +67,8 @@ def loginView(request):
                 return render_to_response('wpmauth/login.html',
                     { 'form': form,
                       'error_message': _('Invalid login. '\
-                          'Please try again.') })
+                          'Please try again.') },
+                    context_instance=RequestContext(request))
             if user is not None:
                 if user.is_active:
                     login(request, user)
@@ -76,7 +79,8 @@ def loginView(request):
                         return render_to_response('wpmauth/login.html',
                         { 'form': form,
                           'error_message': _('This is not an IMAP '
-                                 'valid account. Please try again.') })
+                                 'valid account. Please try again.') },
+                        context_instance=RequestContext(request))
 
                     request.session['username'] = username
                     request.session['password'] = password
@@ -89,17 +93,20 @@ def loginView(request):
                     return render_to_response('wpmauth/login.html',
                         { 'form': form,
                           'error_message': _('Sorry, disabled ' \
-                          'account.') })
+                          'account.') },
+                        context_instance=RequestContext(request))
             # Invalid user:
             else:
                 return render_to_response('wpmauth/login.html',
                     { 'form': form,
                       'error_message': _('Invalid login. Please ' \
-                          'try again.') })
+                          'try again.') },
+                    context_instance=RequestContext(request))
         # Invalid form:
         else:
             return render_to_response('wpmauth/login.html',
-                { 'form': form })
+                { 'form': form },
+                context_instance=RequestContext(request))
     # Display the empty form:
     else:
         try:
@@ -109,7 +116,8 @@ def loginView(request):
             next = settings.LOGIN_SUCCESS
         data = { 'next': next }
         form = LoginForm(data)
-        return render_to_response('wpmauth/login.html',{ 'form': form })
+        return render_to_response('wpmauth/login.html',{ 'form': form },
+            context_instance=RequestContext(request))
 
 def logoutView(request):
     request.session.modified = True

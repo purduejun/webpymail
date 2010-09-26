@@ -31,6 +31,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect
+from django.template import RequestContext
 from django.views.decorators.http import require_POST
 
 from forms import AddressForm, ComposeToForm
@@ -87,7 +88,8 @@ def manage_address(request, address_id = None):
         else:
             context['form'] = AddressForm()
 
-    return render_to_response('manage_address.html', context )
+    return render_to_response('manage_address.html', context ,
+        context_instance=RequestContext(request))
 
 @login_required
 def browse_addresses(request):
@@ -95,7 +97,8 @@ def browse_addresses(request):
         'last_name')
 
     return render_to_response('browse_addresses.html',
-        { 'address_list': address_list } )
+        { 'address_list': address_list },
+        context_instance=RequestContext(request))
 
 
 @login_required
