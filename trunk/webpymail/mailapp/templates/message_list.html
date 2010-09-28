@@ -55,7 +55,7 @@
         {% else %}{% trans "(No subject)" %}{% endif %}</a></p>
     </div>
     {% if message.deleted %}</div>{% endif %}
-    <div class="date">{% trans "Size" %}: {{ message.size }} B</div>
+    <div class="date">{% trans "Size" %}: {{ message.size|filesizeformat }}</div>
     <p>{% trans "From" %}: {{ message.envelope.from_short|join:", " }}</p>
     <p>{% trans "To" %}: {{ message.envelope.to_short|join:", " }}</p>
     </div>
