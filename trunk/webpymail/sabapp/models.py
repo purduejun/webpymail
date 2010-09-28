@@ -25,6 +25,7 @@
 #
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
@@ -45,6 +46,10 @@ class AddressManager(models.Manager):
             Q( user__exact = request.user, imap_server__exact = host, ab_type__exact = 1 ) |
             Q( imap_server__exact = host, ab_type__exact = 2 ) |
             Q( ab_type__exact = 3 ) )
+
+    def have_addr(self, request, addr):
+        address = self.for_request(request).filter( email__iexact = addr )
+        return bool(address)
 
 class Address(models.Model):
     user = models.ForeignKey(User, null=True)
