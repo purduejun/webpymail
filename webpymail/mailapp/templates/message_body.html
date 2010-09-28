@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 {% load i18n %}
 {% load mailtags %}
-
+{% load addresstags %}
 
 {% block headercontent %}
 <link href="{{ MEDIA_URL }}css/message.css" rel="stylesheet" type="text/css"></link>
@@ -23,7 +23,6 @@
     <a href="{% url mailapp_forward_message folder=message.folder.url,uid=message.uid %}">{% trans "Forward as Attachment" %}</a>
 </div>
 
-
 {# Message header #}
 
 <div class="message">
@@ -38,6 +37,8 @@
     <th>{% trans "From:" %}</th>
     <td>{% for addr in message.envelope.env_from %}
         {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+        {% ifhasaddr addr %}<img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">{% else %}
+        <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">{% endifhasaddr %}
     {% endfor %}</td>
     </tr>
     {% endif %}
@@ -47,6 +48,8 @@
     <th>{% trans "To:" %}</th>
     <td>{% for addr in message.envelope.env_to %}
         {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+        {% ifhasaddr addr %}<img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">{% else %}
+        <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">{% endifhasaddr %}
     {% endfor %}</td>
     </tr>
     {% endif %}
@@ -56,6 +59,8 @@
     <th>{% trans "Cc:" %}</th>
     <td>{% for addr in message.envelope.env_cc %}
         {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+        {% ifhasaddr addr %}<img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">{% else %}
+        <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">{% endifhasaddr %}
     {% endfor %}</td>
     </tr>
     {% endif %}
@@ -65,6 +70,8 @@
     <th>{% trans "Cc:" %}</th>
     <td>{% for addr in message.envelope.env_bcc %}
         {{addr.0}} &lt;{{addr.1}}&gt;&nbsp;
+        {% ifhasaddr addr %}<img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">{% else %}
+        <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">{% endifhasaddr %}
     {% endfor %}</td>
     </tr>
     {% endif %}
