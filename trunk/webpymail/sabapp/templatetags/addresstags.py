@@ -25,9 +25,10 @@
 #
 
 from django import template
-from django.template import resolve_variable
-from django.utils.translation import gettext_lazy as _
 from django.template import Node, NodeList
+from django.template import resolve_variable
+from django.template.defaultfilters import stringfilter
+from django.utils.translation import gettext_lazy as _
 
 from sabapp.models import Address
 
@@ -74,3 +75,27 @@ class IfHasAddrNode(Node):
             return self.nodelist_true.render(context)
         else:
             return self.nodelist_false.render(context)
+
+##
+# Filters
+##
+
+@stringfilter
+def first_name(st):
+    bits = st.split()
+    if len(bits) > 1:
+        return ' '.join(bits[:-1])
+    else:
+        return st.strip()
+
+register.filter('first_name', first_name)
+
+@stringfilter
+def last_name(st):
+    bits = st.split()
+    if len(bits) > 1:
+        return bits[-1]
+    else:
+        return ''
+
+register.filter('last_name', last_name)

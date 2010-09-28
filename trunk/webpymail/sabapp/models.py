@@ -55,7 +55,7 @@ class Address(models.Model):
     user = models.ForeignKey(User, null=True)
     imap_server = models.CharField(_('IMAP server'), max_length=128)
 
-    nickname = models.CharField(max_length=64)
+    nickname = models.CharField(max_length=64, blank = True)
     first_name = models.CharField(_('first name'), max_length=30, blank = True)
     last_name = models.CharField(_('last name'), max_length=64, blank = True)
     email = models.EmailField(_('e-mail address'))
@@ -72,15 +72,15 @@ class Address(models.Model):
 
         db_table = 'address_book'
 
-        unique_together = (('user', 'imap_server', 'nickname',
-            'ab_type'),)
+        ordering = ['first_name', 'last_name', 'email']
 
     def full_name(self):
         return ('%s %s' % (self.first_name, self.last_name)).strip()
 
     def mail_addr(self):
-        if self.first_name or self.last_name:
-            return '"%s %s" <%s>' % (self.first_name, self.last_name, self.email)
+        name = ('%s %s' % (self.first_name, self.last_name)).strip()
+        if name:
+            return '"%s" <%s>' % (name, self.email)
         else:
             return self.email
 
