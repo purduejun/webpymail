@@ -55,6 +55,8 @@ def delete_address(request, address_id ):
 def manage_address(request, address_id = None):
     '''Add an address to the user's address book'''
     context = {}
+    next = request.GET.get('next','browse_addresses')
+    context['next'] = next
 
     if address_id:
         try:
@@ -64,8 +66,8 @@ def manage_address(request, address_id = None):
             raise Http404
 
     if request.method == 'POST':
-        if  request.POST.has_key('cancel'):
-            return redirect('browse_addresses')
+        if request.POST.has_key('cancel'):
+            return redirect(next)
         if address_id:
             form = AddressForm(request.POST, instance = address)
         else:
@@ -77,7 +79,7 @@ def manage_address(request, address_id = None):
             address.imap_server = request.session['host']
             address.ab_type = 1
             address.save()
-            return redirect('browse_addresses')
+            return redirect(next)
         else:
             # Show errors:
             context['form'] = form
@@ -86,15 +88,20 @@ def manage_address(request, address_id = None):
         if address_id:
             context['form'] = AddressForm(instance = address)
         else:
-            context['form'] = AddressForm()
+            # Try to get initialization values
+            first_name = request.GET.get('first_name','')
+            last_name = request.GET.get('last_name','')
+            email = request.GET.get('email','')
+            context['form'] = AddressForm(data = {'first_name':first_name,
+                                                  'last_name':last_name,
+                                                  'email':email})
 
     return render_to_response('manage_address.html', context ,
         context_instance=RequestContext(request))
 
 @login_required
 def browse_addresses(request):
-    address_list = Address.objects.for_request(request).order_by('first_name',
-        'last_name')
+    address_list = Address.objects.for_request(request)
 
     return render_to_response('browse_addresses.html',
         { 'address_list': address_list },

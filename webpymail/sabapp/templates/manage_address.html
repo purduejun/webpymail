@@ -13,7 +13,7 @@
 
 {% block contents %}
 <h2>{% trans "Add new address" %}</h2>
-<form method="post" action="">
+<form method="post" action="?next={{ next }}">
   <table class="msg_form" width="100%">
     {{ form }}
     <tr>
