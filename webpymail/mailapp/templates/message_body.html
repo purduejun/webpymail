@@ -107,11 +107,11 @@
 <div class="message_body">
 
 {% for part in message.bodystructure.serial_message %}
-    {% if part.is_text %}
-        {% if part.test_plain %}
+    {% if part.is_text and not part.is_attachment %}
+        {% if part.test_plain %} 
             <pre>{% part_text message part "Plain" %}</pre>
         {% endif %}
-        {% if part.test_html and not part.is_attachment %}
+        {% if part.test_html %}
         <div class="attach_link">
             <a href="/mail/FOLDER_{{ folder.url }}/{{ message.uid }}/{{ part.part_number }}/">
             {% trans "View HTML message" %}</a> -
@@ -214,7 +214,7 @@
         </table>
         </div>
       {% endif %}
-    {% endif %}
+    {% endif %} {# part.is_attachment and not part.is_encapsulated #}
 {% endfor %}
 
 </div>
