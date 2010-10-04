@@ -120,7 +120,11 @@ def get_msg_part( request, folder, uid, part_number, inline = False ):
         response['Content-Disposition'] = 'inline; filename=%s' % filename
     else:
         response['Content-Disposition'] = 'attachment; filename=%s' % filename
-    response['Content-Type'] = '%s/%s' % (part.media, part.media_subtype)
+
+    if part.media.upper() == 'TEXT':
+        response['Content-Type'] = '%s/%s; charset=%s' % (part.media, part.media_subtype, part.charset())
+    else:
+        response['Content-Type'] = '%s/%s' % (part.media, part.media_subtype)
 
     response.write( message.part(part) )
     response.close()
