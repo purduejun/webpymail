@@ -65,7 +65,7 @@ def show_folders_view(request):
     # Read the subscribed folder list:
     M.refresh_folders(subscribed=True)
 
-    return render_to_response('folder_list.html',{'server': M  },
+    return render_to_response('mail/folder_list.html',{'server': M  },
         context_instance=RequestContext(request))
 
 @login_required

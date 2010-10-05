@@ -65,7 +65,7 @@ def show_message(request, folder, uid):
         except hlimap.imapmessage.MessageNotFound:
             return redirect('message_list', folder=folder.url() )
 
-    return render_to_response('message_body.html',{'folder':folder,
+    return render_to_response('mail/message_body.html',{'folder':folder,
         'message':message,
         'inline_img': config.getboolean('message', 'show_images_inline')},
         context_instance=RequestContext(request))
@@ -80,7 +80,7 @@ def message_header( request, folder, uid ):
     folder = M[folder_name]
     message = folder[int(uid)]
 
-    return render_to_response('message_header.html',{'folder':folder,
+    return render_to_response('mail/message_header.html',{'folder':folder,
         'message':message},
         context_instance=RequestContext(request))
 
@@ -94,7 +94,7 @@ def message_structure( request, folder, uid ):
     folder = M[folder_name]
     message = folder[int(uid)]
 
-    return render_to_response('message_structure.html',{'folder':folder,
+    return render_to_response('mail/message_structure.html',{'folder':folder,
         'message':message},
         context_instance=RequestContext(request))
 
@@ -135,7 +135,7 @@ def get_msg_part_inline( request, folder, uid, part_number ):
     return get_msg_part( request, folder, uid, part_number, True )
 
 def not_implemented(request):
-    return render_to_response('not_implemented.html',
+    return render_to_response('mail/not_implemented.html',
         context_instance=RequestContext(request))
 
 @login_required

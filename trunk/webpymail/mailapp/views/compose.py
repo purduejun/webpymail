@@ -230,18 +230,18 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
                 error_message = ''.join(
                     ['<p>%s' % escape(detail.recipients[Xi][1])
                      for Xi in detail.recipients ] )
-                return render_to_response('send_message.html', {'form':form,
+                return render_to_response('mail/send_message.html', {'form':form,
                     'server_error': error_message,
                     'uploaded_files': uploaded_files},
                     context_instance=RequestContext(request))
             except SMTPException, detail:
-                return render_to_response('send_message.html', {'form':form,
+                return render_to_response('mail/send_message.html', {'form':form,
                     'server_error': '<p>%s' % detail,
                     'uploaded_files': uploaded_files},
                     context_instance=RequestContext(request))
             except Exception, detail:
                 error_message = '<p>%s' % detail
-                return render_to_response('send_message.html', {'form':form,
+                return render_to_response('mail/send_message.html', {'form':form,
                     'server_error': error_message,
                     'uploaded_files': uploaded_files},
                     context_instance=RequestContext(request))
@@ -254,7 +254,7 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
 
             return HttpResponseRedirect('/')
         else:
-            return render_to_response('send_message.html', {'form':form,
+            return render_to_response('mail/send_message.html', {'form':form,
                 'uploaded_files': uploaded_files },
                     context_instance=RequestContext(request))
 
@@ -275,7 +275,7 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
 
         form = ComposeMailForm(initial=initial,
             request = request )
-        return render_to_response('send_message.html', {'form':form,
+        return render_to_response('mail/send_message.html', {'form':form,
             'uploaded_files': uploaded_files },
             context_instance=RequestContext(request))
 

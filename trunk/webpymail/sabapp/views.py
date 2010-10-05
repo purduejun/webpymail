@@ -96,14 +96,14 @@ def manage_address(request, address_id = None):
                                                   'last_name':last_name,
                                                   'email':email})
 
-    return render_to_response('manage_address.html', context ,
+    return render_to_response('sab/manage_address.html', context ,
         context_instance=RequestContext(request))
 
 @login_required
 def browse_addresses(request):
     address_list = Address.objects.for_request(request)
 
-    return render_to_response('browse_addresses.html',
+    return render_to_response('sab/browse_addresses.html',
         { 'address_list': address_list },
         context_instance=RequestContext(request))
 
