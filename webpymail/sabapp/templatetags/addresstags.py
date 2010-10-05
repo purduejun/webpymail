@@ -26,7 +26,7 @@
 
 from django import template
 from django.template import Node, NodeList
-from django.template import resolve_variable
+from django.template import Variable
 from django.template.defaultfilters import stringfilter
 from django.utils.translation import gettext_lazy as _
 
@@ -68,8 +68,8 @@ class IfHasAddrNode(Node):
             yield node
 
     def render(self, context):
-        request = resolve_variable('request', context)
-        addr = resolve_variable(self.addr, context)
+        request = Variable('request').resolve(context)
+        addr = Variable(self.addr).resolve(context)
 
         if Address.objects.have_addr(request, addr[1]):
             return self.nodelist_true.render(context)
