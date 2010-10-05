@@ -91,7 +91,7 @@ def show_message_list_view(request, folder=settings.DEFAULT_FOLDER):
     message_list.add_messages_range()
 
     # Show the message list
-    return render_to_response('message_list.html',{
+    return render_to_response('mail/message_list.html',{
             'folder':folder,
             'paginator': folder.paginator(),
             'query':query,

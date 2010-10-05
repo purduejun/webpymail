@@ -40,7 +40,7 @@
 <input type="submit" name="copy" value="{% trans "Copy" %}"> |
 </div>
 
-{% include "inc_page_nav.html" %}
+{% include "mail/inc_page_nav.html" %}
 
 <div class="message_list">
 {% for message in folder %}
@@ -63,7 +63,7 @@
 {% endfor %}
 
 </div>
-{% include "inc_page_nav.html" %}
+{% include "mail/inc_page_nav.html" %}
 
 <p>{% trans "This will delete PERMANENTLY the messages marked 'delete': " %}
 <input type="submit" name="expunge" value="{% trans "Expunge" %}" />
