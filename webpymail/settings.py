@@ -82,7 +82,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
     'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.request')
+    'django.core.context_processors.request',
+    'themesapp.context_processors.theme_name')
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -106,7 +107,8 @@ INSTALLED_APPS = (
     # WebPyMail apps
     'webpymail.wpmauth',
     'webpymail.mailapp',
-    'webpymail.sabapp'
+    'webpymail.sabapp',
+    'webpymail.themesapp',
 )
 
 ######################

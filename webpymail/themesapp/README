@@ -1,0 +1,29 @@
+Themes Application
+==================
+
+This application is used to allow the use of different themes in webpymail.
+
+It has several components:
+
+ * *theme_name* context processor will create a template variable named 'theme'.
+
+ * Reimplemented *render_to_response*, this will try to get the template from the following list:
+    1. `<theme name>/<template name>`
+    2. `<default theme>/<template name>`
+    3. `<template name>`
+ *render_to_response* should be used in the same way as before.
+ * Made a few modifications to the django's default tags: extends and include in order for them to use the same template searching. To use this tags it's necessary load them with:
+
+{{{
+ {% load loader_tags %}
+}}}
+
+The current theme can be defined in several ways:
+
+ * Define DEFAULT_THEME in settings.py (Default: "default")
+ * Use the configuration files, section 'general', option 'theme'
+ * Pass the new theme in a GET request: ?theme=foo
+
+The choose theme is stored on the django's session.
+
+$Id$

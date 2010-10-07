@@ -34,17 +34,17 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect
 from django.template import RequestContext
 from django.utils.translation import gettext_lazy as _
 
 # Local
 from mail_utils import serverLogin
+from themesapp.shortcuts import render_to_response
 from webpymail.utils.config import config_from_request
 import msgactions
 
 import hlimap
-
 
 @login_required
 def show_message(request, folder, uid):

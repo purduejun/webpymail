@@ -35,12 +35,12 @@ import base64
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 # Local
 from mailapp.models import FoldersToExpand
 from mail_utils import serverLogin
+from themesapp.shortcuts import render_to_response
 
 ##
 # Views

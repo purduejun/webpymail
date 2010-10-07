@@ -34,14 +34,13 @@ import base64
 # Django
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 
 # Local
-from mail_utils import serverLogin
-import msgactions
-
 from mailapp.forms import MessageActionForm
+from mail_utils import serverLogin
+from themesapp.shortcuts import render_to_response
+import msgactions
 
 ##
 # Views
@@ -91,9 +90,10 @@ def show_message_list_view(request, folder=settings.DEFAULT_FOLDER):
     message_list.add_messages_range()
 
     # Show the message list
-    return render_to_response('mail/message_list.html',{
+    return render_to_response( 'mail/message_list.html',{
             'folder':folder,
             'paginator': folder.paginator(),
             'query':query,
-            'form':form },
+            'form':form }, 
             context_instance=RequestContext(request))
+
