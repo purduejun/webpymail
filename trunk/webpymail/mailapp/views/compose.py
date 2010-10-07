@@ -45,7 +45,6 @@ except ImportError:
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, HttpResponseRedirect, HttpResponse
-from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.encoding import smart_unicode
 from django.utils.html import escape
@@ -55,6 +54,7 @@ from django.utils.translation import ugettext as _
 from mailapp.models import Attachments
 from mail_utils import serverLogin, send_mail, join_address_list, mail_addr_str, mail_addr_name_str, quote_wrap_lines, show_addrs, compose_rfc822
 from webpymail.utils.config import config_from_request
+from themesapp.shortcuts import render_to_response
 
 from mailapp.forms import ComposeMailForm
 

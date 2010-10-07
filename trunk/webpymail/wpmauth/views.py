@@ -38,6 +38,7 @@ from django.utils.translation import gettext_lazy as _
 # Local imports:
 from forms import LoginForm
 from utils.config import server_config
+from themesapp.shortcuts import render_to_response
 
 def loginView(request):
     """Login the user on the system
