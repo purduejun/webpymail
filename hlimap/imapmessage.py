@@ -557,7 +557,7 @@ class Message(object):
         return self.__bodystructure
     bodystructure = property(get_bodystructure)
 
-    def part(self, part, force_decode = False):
+    def part(self, part, decode_html = False, decode_text = True ):
         '''Get a part from the server.
 
         The TEXT/PLAIN parts are decoded according to the BODYSTRUCTURE
@@ -571,8 +571,8 @@ class Message(object):
         elif part.body_fld_enc.upper() == 'QUOTED-PRINTABLE':
             text = quopri.decodestring(text)
 
-        if part.media.upper() == 'TEXT' and (force_decode or
-            part.media_subtype.upper() != 'HTML'):
+        if part.media.upper() == 'TEXT' and (decode_html or
+            part.media_subtype.upper() != 'HTML') and decode_text:
             try:
                 return unicode(text, part.charset())
             except (UnicodeDecodeError, LookupError):
