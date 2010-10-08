@@ -411,7 +411,7 @@ def forward_message_inline(request, folder, uid):
     text += message_header( message )
 
     for part in message.bodystructure.serial_message():
-        if part.is_text() and part.test_plain():
+        if part.is_text() and part.test_plain() and not part.is_attachment():
             text += message.part( part )
 
         if part.is_encapsulated():
@@ -431,7 +431,7 @@ def forward_message_inline(request, folder, uid):
                 dir=settings.TEMPDIR)
 
             # Save message source to a file
-            os.write( fl[0], message.part(part) )
+            os.write( fl[0], message.part(part, decode_text = False) )
             os.close(fl[0])
 
             if part.filename():
