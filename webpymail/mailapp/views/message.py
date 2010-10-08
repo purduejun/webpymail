@@ -99,6 +99,20 @@ def message_structure( request, folder, uid ):
         context_instance=RequestContext(request))
 
 @login_required
+def message_source( request, folder, uid ):
+    '''Show the message header
+    '''
+    folder_name =  base64.urlsafe_b64decode(str(folder))
+
+    M = serverLogin( request )
+    folder = M[folder_name]
+    message = folder[int(uid)]
+
+    return render_to_response('mail/message_source.html',{'folder':folder,
+        'message':message},
+        context_instance=RequestContext(request))
+
+@login_required
 def get_msg_part( request, folder, uid, part_number, inline = False ):
     '''Gets a message part.
     '''

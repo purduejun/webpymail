@@ -1,0 +1,26 @@
+{% load loader_tags %}{% extends "base/base.html" %}
+{% load i18n %}
+{% load mailtags %}
+
+
+{% block headercontent %}
+<link href="{{ MEDIA_URL }}css/message.css" rel="stylesheet" type="text/css"></link>
+{% endblock %}
+
+{% block inpage_title %}{% trans "Message Header" %}{% endblock %}
+
+{% block extra_menus %}
+  <a href="{% url message_list folder.url %}">
+    {% trans "Message List" %}
+  </a>&nbsp;&nbsp;
+  <a href="{% url folder_list %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;
+{% endblock %}
+
+{% block contents %}
+<div class="message">
+  <div class="subject">{% trans "Message Source" %}</div>
+  <pre>
+{{ message.source }}
+  </pre>
+</div>
+{% endblock %}
