@@ -62,6 +62,9 @@ urlpatterns += patterns('mailapp.views.message',
 
     url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/STRUCTURE/$',
         'message_structure', name='mailapp_message_structure'),
+
+    url(r'^' + folder_pat + r'/(?P<uid>[\d]+)/SOURCE/$',
+        'message_source', name='mailapp_message_source'),
     )
 
 # Compose messages:

@@ -221,7 +221,8 @@
 </div>
 <div class="message_info">
 <p><a href="{% url mailapp_message_header folder=message.folder.url,uid=message.uid %}">{% trans "Message Header" %}</a> |
-<a href="{% url mailapp_message_structure folder=message.folder.url,uid=message.uid %}">{% trans "Message Structure" %}</a></p>
+<a href="{% url mailapp_message_structure folder=message.folder.url,uid=message.uid %}">{% trans "Message Structure" %}</a> |
+<a href="{% url mailapp_message_source folder=message.folder.url,uid=message.uid %}">{% trans "Message Source" %}</a></p>
 </div>
 
 <form method="post" action="{% url mailapp-message folder=message.folder.url,uid=message.uid %}">
