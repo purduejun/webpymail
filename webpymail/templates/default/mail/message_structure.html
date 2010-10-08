@@ -19,6 +19,30 @@
 <div class="subject">
 {% trans "Message Structure" %}
 </div><pre>
-{{ message.bodystructure.represent }}
+<table>
+  <tr>
+    <th>Number</th>
+    <th>Media</th>
+    <th>Is text?</th>
+    <th>Is basic?</th>
+    <th>Is multipart?</th>
+    <th>Is encapsulated?</th>
+    <th>Is attachment?</th>
+    <th>Charset</th>
+  </tr>
+{% for part in message.bodystructure.serial_message %}
+  <tr>
+    <td>{{ part.part_number }}</td>
+    <td>{{ part.media }}/{{ part.media_subtype }}</td>
+    <td>{{ part.is_text }}</td>
+    <td>{{ part.is_basic }}</td>
+    <td>{{ part.is_multipart }}</td>
+    <td>{{ part.is_encapsulated }}</td>
+    <td>{{ part.is_attachment }}</td>
+    <td>{{ part.charset }}</td>
+  </tr>
+  {# {{ message.bodystructure.represent }} #}
+{% endfor %}
+</table>
 </pre></div>
 {% endblock %}
