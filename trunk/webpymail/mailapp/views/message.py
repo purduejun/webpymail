@@ -107,9 +107,13 @@ def message_source( request, folder, uid ):
     M = serverLogin( request )
     folder = M[folder_name]
     message = folder[int(uid)]
+    # Assume that we have a single byte encoded string, this is because there
+    # can be several different files with different encodings within the same
+    # message.
+    source = unicode(message.source(),'ISO-8859-1')
 
     return render_to_response('mail/message_source.html',{'folder':folder,
-        'message':message},
+        'message':message, 'source': source },
         context_instance=RequestContext(request))
 
 @login_required
