@@ -193,6 +193,12 @@
                 <th>{% trans "Part number:" %}</th>
                 <td>{{ part.part_number }}</td>
             </tr>
+            {% if part.body_fld_id %}
+            <tr>
+                <th>{% trans "Id:" %}</th>
+                <td>{% trans "this attachment has a uniq ID" %}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <th>{% trans "Mime type:" %}</th>
                 <td>{{ part.media }}/{{part.media_subtype}}</td>
@@ -201,9 +207,15 @@
                 <th>{% trans "File Name:" %}</th>
                 <td>{% if part.filename %}{{ part.filename }}{% else %}{% trans "Unknown" %}{% endif %}</td>
             </tr>
+            {% if part.body_fld_desc %}
+            <tr>
+                <th>{% trans "Description:" %}</th>
+                <td>{{ part.body_fld_desc }}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <th>{% trans "Size:" %}</th>
-                <td>{{ part.body_fld_octets }} {% trans "B" %}</td>
+                <td>{{ part.body_fld_octets|filesizeformat }}</td>
             </tr>
             <tr>
                 <th colspan=2>
