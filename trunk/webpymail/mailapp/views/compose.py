@@ -420,7 +420,7 @@ def forward_message_inline(request, folder, uid):
                 text += message_header( part )
             else:
                 text += '\n' + _('End Encapsuplated Message').center(40,'-') + '\n'
-    text += _('End Forwarded Message').center(40,'-') + '\n'
+    text += '\n' + _('End Forwarded Message').center(40,'-') + '\n'
 
     # Extract the message attachments
     attach_list = []
@@ -434,17 +434,15 @@ def forward_message_inline(request, folder, uid):
             os.write( fl[0], message.part(part, decode_text = False) )
             os.close(fl[0])
 
-            if part.filename():
-                filename = part.filename()
-            else:
-                filename = _('Unknown')
-
             # Add a entry to the Attachments table:
             attachment = Attachments(
                 user = request.user,
                 temp_file = fl[1],
-                filename = filename,
+                filename = part.filename() if part.filename() else  _('Unknown'),
                 mime_type = '%s/%s' % (part.media, part.media_subtype),
+                content_desc = part.body_fld_desc if part.body_fld_desc else '',
+                content_id = part.body_fld_id if part.body_fld_id else '',
+                show_inline = False if part.body_fld_dsp[0].upper() == 'ATTACHMENT' else True,
                 sent = False )
             attachment.save()
             attach_list.append(attachment.id)

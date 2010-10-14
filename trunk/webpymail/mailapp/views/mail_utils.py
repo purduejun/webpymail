@@ -219,8 +219,16 @@ def compose_rfc822( from_addr, to_addr, cc_addr, bcc_addr,
 
             # Set the filename parameter
             attach.set_param('name',attachment.filename)
-            attach.add_header('Content-Disposition', 'attachment',
-                filename=attachment.filename)
+            if attachment.show_inline:
+                attach.add_header('Content-Disposition', 'inline',
+                    filename=attachment.filename)
+            else:
+                attach.add_header('Content-Disposition', 'attachment',
+                    filename=attachment.filename)
+            if attachment.content_desc:
+                attach.add_header('Content-Description', attachment.content_desc)
+            if attachment.content_id:
+                attach.add_header('Content-Id', attachment.content_id)
 
             msg.attach(attach)
     else:
