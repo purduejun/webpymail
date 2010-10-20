@@ -28,7 +28,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.template import loader
 
-from webpymail.utils.config import config_from_request
+from webpymail.utils.config import WebpymailConfig
 
 DEFAULT_THEME = getattr(settings, 'DEFAULT_THEME', 'default')
 
@@ -51,7 +51,7 @@ def get_theme( request ):
 
     # From Webpymail configuration
     if request and request.user.is_authenticated():
-        config = config_from_request( request )
+        config =  WebpymailConfig( request )
         theme = config.get('general', 'theme')
         if theme:
             return theme

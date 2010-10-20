@@ -36,68 +36,52 @@ from django.conf import settings
 
 from utils.mix import cmp_dict
 
-# re:
+# WebpymailConfig class
 
-identity_re = re.compile(r'^identity-(?P<id_number>[0-9]+)$')
-
-def user_config( server_name, user_name ):
+class WebpymailConfig(SafeConfigParser):
     '''
-    Read the user configuration.
-
-    @param server_name: server the user has logged in against
-    @param user_name: name used to make the login
-
-    @return configuration object.
+    This is the class used to manage all the user configuration available
+    in WebPyMail.
     '''
-    config = SafeConfigParser()
 
-    user_conf=os.path.join(settings.USERCONFDIR, '%s@%s.conf' % (user_name,
-        server_name))
+    def __init__(self, request):
+        # Note that SafeConfigParser if not a new class so we have to explicitly
+        # call the __init__method
+        SafeConfigParser.__init__(self)
 
-    if not os.path.isfile(user_conf): # Touch the config file
-        open(user_conf, 'w').close()
+        host = request.session['host']
+        username = request.session['username'] 
+        user_conf = os.path.join(settings.USERCONFDIR, '%s@%s.conf' % (username,host))
 
-    server_conf = os.path.join(settings.SERVERCONFDIR, '%s.conf' % server_name )
+        if not os.path.isfile(user_conf): # Touch the user configuration file
+            open(user_conf, 'w').close()
 
-    config.read( [ settings.FACTORYCONF,
-                   settings.DEFAULTCONF,
-                   user_conf,
-                   server_conf,
-                   settings.SYSTEMCONF ] )
+        server_conf = os.path.join(settings.SERVERCONFDIR, '%s.conf' % host )
+        
+        self.read( [ settings.FACTORYCONF,
+                     settings.DEFAULTCONF,
+                     user_conf,
+                     server_conf,
+                     settings.SYSTEMCONF ] )
 
-    return config
+    identity_re = re.compile(r'^identity-(?P<id_number>[0-9]+)$')
+    def identities( self ):
+        '''
+        Returns a list of identities defined on the user configuration.
+        @return a list of identities in dictionary form.
+        '''
+        identity_list = []
+        for section in self.sections():
+            identity_sec = self.identity_re.match(section)
+            if identity_sec:
+                identity = {}
+                identity['id_number'] = int(identity_sec.group('id_number'))
+                for option in self.options(section):
+                    identity[option] = self.get( section, option )
+                identity_list.append( identity )
+        identity_list.sort(cmp_dict( 'id_number' ))
 
-def config_from_request( request ):
-    '''
-    Read the user configuration.
-
-    @param request: django request
-
-    @return configuration object.
-    '''
-    return user_config( request.session['host'],
-                        request.session['username'] )
-
-def user_identities( config ):
-    '''
-    Returns a list of identities defined on the user configuration.
-
-    @param config: configuration object
-
-    @return a list of identities in dicionary form.
-    '''
-    identity_list = []
-    for section in config.sections():
-        identity_sec = identity_re.match(section)
-        if identity_sec:
-            identity = {}
-            identity['id_number'] = int(identity_sec.group('id_number'))
-            for option in config.options(section):
-                identity[option] = config.get( section, option )
-            identity_list.append( identity )
-    identity_list.sort(cmp_dict( 'id_number' ))
-
-    return identity_list
+        return identity_list
 
 def server_config():
     '''
@@ -112,7 +96,7 @@ def server_config():
 def server_list():
     '''
     Returns a list of server configurations. This is the login server, ie, the
-    server against which the users autenticate.
+    server against which the users authenticate.
     '''
     config = server_config()
 
