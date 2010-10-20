@@ -41,7 +41,7 @@ from django.utils.translation import gettext_lazy as _
 # Local
 from mail_utils import serverLogin
 from themesapp.shortcuts import render_to_response
-from webpymail.utils.config import config_from_request
+from webpymail.utils.config import WebpymailConfig
 import msgactions
 
 import hlimap
@@ -50,7 +50,7 @@ import hlimap
 def show_message(request, folder, uid):
     '''Show the message
     '''
-    config = config_from_request( request )
+    config = WebpymailConfig( request )
 
     folder_name =  base64.urlsafe_b64decode(str(folder))
 

@@ -53,7 +53,7 @@ from django.utils.translation import ugettext as _
 # Local Imports
 from mailapp.models import Attachments
 from mail_utils import serverLogin, send_mail, join_address_list, mail_addr_str, mail_addr_name_str, quote_wrap_lines, show_addrs, compose_rfc822
-from webpymail.utils.config import config_from_request
+from webpymail.utils.config import WebpymailConfig
 from themesapp.shortcuts import render_to_response
 
 from mailapp.forms import ComposeMailForm
@@ -199,7 +199,7 @@ def send_message(request, text='', to_addr='', cc_addr='', bcc_addr = '', subjec
             text_format = form_data['text_format']
             message_text = form_data['message_text'].encode('utf-8')
 
-            config = config_from_request( request )
+            config = WebpymailConfig( request )
 
             if text_format == MARKDOWN and HAS_MARKDOWN:
                 md = markdown.Markdown(output_format='HTML')

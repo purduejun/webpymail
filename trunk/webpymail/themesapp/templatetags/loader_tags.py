@@ -4,7 +4,6 @@ from django.template.loader import get_template, select_template
 from django.conf import settings
 from django.utils.safestring import mark_safe
 
-from webpymail.utils.config import config_from_request
 from themesapp.shortcuts import get_theme
 
 register = Library()

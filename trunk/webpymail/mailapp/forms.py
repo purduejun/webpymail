@@ -36,7 +36,7 @@ from django.conf import settings
 
 import re
 
-from utils.config import  config_from_request, user_identities
+from utils.config import WebpymailConfig
 from multifile import *
 
 try:
@@ -126,8 +126,8 @@ class ComposeMailForm(forms.Form):
         super(ComposeMailForm, self).__init__(*args, **kwargs)
 
         # Populate the identity choices
-        config = config_from_request( request )
-        identity_list = user_identities( config )
+        config =  WebpymailConfig( request )
+        identity_list = config.identities()
         from_list = []
         for identity in identity_list:
             if identity['user_name'] and identity['mail_address']:
