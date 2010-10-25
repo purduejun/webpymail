@@ -158,6 +158,14 @@ def not_implemented(request):
 
 @login_required
 def index(request):
-    return HttpResponseRedirect(reverse('folder_list'))
+    '''
+    This is the main index, it reads the configuration file and
+    redirects to the default view defined on the configuration 
+    file.
+    '''
+    config = WebpymailConfig( request )
+    login_page = config.get('general','login_page')
+
+    return HttpResponseRedirect(login_page)
 
 
