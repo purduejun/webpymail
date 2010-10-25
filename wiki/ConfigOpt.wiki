@@ -22,6 +22,12 @@ The paths to these files are defined on the settings.py file. You can change thi
 
 = Configuration Options =
 
+== General ==
+
+ * *theme* - (default: default) theme to be used please read ThemesApplication
+ * *login_page* - (default: /mail/FOLDER_SU5CT1g=/) by default we use the message list view on the INBOX folder. Note that you must change this if Webpymail isn't installed on the webserver root
+ * *logout_page* - (default: /) This can be a relative or a complete URL
+
 == Identities ==
 
 The user can customize one or more identities. Usually these are defined on the per user configuration file in *USERCONFDIR/`<user name>@<host>.conf`*. Each identity must have its own section. The identity section must be named in the form *identity-##* where ## is an integer. Right now the available configuration parameters are:
