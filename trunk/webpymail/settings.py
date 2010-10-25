@@ -152,9 +152,6 @@ AUTHENTICATION_BACKENDS = (
 LOGIN_URL  = '/auth/login/'
 LOGOUT_URL = '/auth/logout/'
 
-LOGOUT_SUCCESS = '/'
-LOGIN_SUCCESS = '/mail/'
-
 # DISPLAY SETTINGS
 
 # TODO: this should be an user setting:

@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Local imports:
 from forms import LoginForm
-from utils.config import server_config
+from utils.config import server_config, WebpymailConfig
 from themesapp.shortcuts import render_to_response
 
 def loginView(request):
@@ -88,6 +88,7 @@ def loginView(request):
                     request.session['host'] = host
                     request.session['port'] = port
                     request.session['ssl'] = ssl
+
                     return HttpResponseRedirect(next)
                 # Disabled account:
                 else:
@@ -110,19 +111,21 @@ def loginView(request):
                 context_instance=RequestContext(request))
     # Display the empty form:
     else:
-        try:
-            next = request['next']
-            if next == '': next = settings.LOGIN_SUCCESS
-        except:
-            next = settings.LOGIN_SUCCESS
-        data = { 'next': next }
+        data = { 'next': request.GET.get('next','') }
         form = LoginForm(data)
         return render_to_response('wpmauth/login.html',{ 'form': form },
             context_instance=RequestContext(request))
 
 def logoutView(request):
+    # Get the user config
+    try:
+        config = WebpymailConfig( request )
+        logout_page = config.get('general', 'logout_page')
+    except KeyError:
+        logout_page = '/'
+    # Do the actual logout
     request.session.modified = True
     logout(request)
     # Redirect to a success page.
-    return HttpResponseRedirect(settings.LOGOUT_SUCCESS)
+    return HttpResponseRedirect(logout_page)
 
