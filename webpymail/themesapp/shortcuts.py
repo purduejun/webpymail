@@ -43,9 +43,13 @@ def get_theme( request ):
         3. If the user is authenticated, the configuration key general.theme is read
         4. The default theme defined in the django settings file with the key DEFAULT_THEME
     '''
-    # From the GET rquest or from the django session
+    # From the GET request or from the django session
     if request:
-        theme = request.GET.get('theme', None) or request.session.get('theme', None )
+        theme = request.GET.get('theme', None)
+        if theme:
+            request.session['theme'] = theme
+            return theme
+        theme = request.session.get('theme', None )
         if theme:
             return theme
 
@@ -54,6 +58,7 @@ def get_theme( request ):
         config =  WebpymailConfig( request )
         theme = config.get('general', 'theme')
         if theme:
+            request.session['theme'] = theme
             return theme
 
     # From settings.py
