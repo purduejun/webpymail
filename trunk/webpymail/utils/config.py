@@ -48,21 +48,27 @@ class WebpymailConfig(SafeConfigParser):
         # Note that SafeConfigParser if not a new class so we have to explicitly
         # call the __init__method
         SafeConfigParser.__init__(self)
-
-        host = request.session['host']
-        username = request.session['username'] 
-        user_conf = os.path.join(settings.USERCONFDIR, '%s@%s.conf' % (username,host))
-
-        if not os.path.isfile(user_conf): # Touch the user configuration file
-            open(user_conf, 'w').close()
-
-        server_conf = os.path.join(settings.SERVERCONFDIR, '%s.conf' % host )
         
-        self.read( [ settings.FACTORYCONF,
-                     settings.DEFAULTCONF,
-                     user_conf,
-                     server_conf,
-                     settings.SYSTEMCONF ] )
+        try:
+            host = request.session['host']
+            username = request.session['username'] 
+            user_conf = os.path.join(settings.USERCONFDIR, '%s@%s.conf' % (username,host))
+
+            if not os.path.isfile(user_conf): # Touch the user configuration file
+                open(user_conf, 'w').close()
+
+            server_conf = os.path.join(settings.SERVERCONFDIR, '%s.conf' % host )
+
+            config_files =  [ settings.FACTORYCONF,
+                              settings.DEFAULTCONF,
+                              user_conf,
+                              server_conf,
+                              settings.SYSTEMCONF ]
+        except KeyError:
+            config_files = [ settings.FACTORYCONF,
+                             settings.DEFAULTCONF ]
+
+        self.read( config_files )
 
     identity_re = re.compile(r'^identity-(?P<id_number>[0-9]+)$')
     def identities( self ):
