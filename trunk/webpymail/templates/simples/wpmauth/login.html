@@ -1,0 +1,20 @@
+{% load loader_tags %}{% extends "base/base.html" %}
+{% load i18n %}
+
+{% block inpage_title %}{% trans "WebPyMail Login" %}{% endblock %}
+
+{% block contents %}
+<br>
+<form method="post" action=".">
+<center>
+<table>
+{{ form }}
+</table>
+<br>
+<input type="submit" value="login" /></center>
+{% if error_message %}
+<p>{{ error_message }}{% endif %} 
+{% if form.has_errors %}
+<p>Your username and password didn't match. Please try again.</p>{% endif %}
+</form>
+{% endblock %}
