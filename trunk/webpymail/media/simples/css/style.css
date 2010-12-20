@@ -28,12 +28,17 @@ body {
     overflow:hidden;
 }
 
+#application {
+  background: #7c7c7c;
+  background: -moz-linear-gradient(-90deg, #505050, #9b9b9b);
+  background: -webkit-gradient(linear, 0 top, 0 bottom, from(#505050), to(#9b9b9b));
+}
+
 #navheader {
     position: relative;
     height: 100%;
     color: white;
     padding: 0.7em 0.5em 0.7em 0.5em;
-    background-color: #7c7c7c;
     font-weight: bold;
 }
 
@@ -42,7 +47,6 @@ body {
     height: 100%;
     color: white;
     padding: 0.7em 0.5em 0.9em 0.5em;
-    background-color: #7c7c7c;
     font-weight: bold;
 }
 
@@ -96,9 +100,12 @@ body {
 }
 
 #contents {
-    background: #7c7c7c;
     margin: 0;
     padding: 0.4em;
+
+    -webkit-border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    border-radius: 0.5em;
 }
 
 /* FOLDER LIST */ 
