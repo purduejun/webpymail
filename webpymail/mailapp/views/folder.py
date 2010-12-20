@@ -41,6 +41,7 @@ from django.template import RequestContext
 from mailapp.models import FoldersToExpand
 from mail_utils import serverLogin
 from themesapp.shortcuts import render_to_response
+from webpymail.utils.config import WebpymailConfig
 
 ##
 # Views
@@ -65,7 +66,14 @@ def show_folders_view(request):
     # Read the subscribed folder list:
     M.refresh_folders(subscribed=True)
 
-    return render_to_response('mail/folder_list.html',{'server': M  },
+    # Get the default identity
+    config =  WebpymailConfig( request )
+    identity_list = config.identities()
+    default_address = identity_list[0]['mail_address']
+
+    return render_to_response('mail/folder_list.html',
+        {'server': M,
+         'address': default_address },
         context_instance=RequestContext(request))
 
 @login_required
