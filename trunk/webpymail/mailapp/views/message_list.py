@@ -40,6 +40,7 @@ from django.template import RequestContext
 from mailapp.forms import MessageActionForm
 from mail_utils import serverLogin
 from themesapp.shortcuts import render_to_response
+from webpymail.utils.config import WebpymailConfig
 import msgactions
 
 ##
@@ -89,9 +90,15 @@ def show_message_list_view(request, folder=settings.DEFAULT_FOLDER):
     message_list.paginator.current_page = page
     message_list.add_messages_range()
 
+    # Get the default identity
+    config =  WebpymailConfig( request )
+    identity_list = config.identities()
+    default_address = identity_list[0]['mail_address']
+
     # Show the message list
     return render_to_response( 'mail/message_list.html',{
             'folder':folder,
+            'address': default_address,
             'paginator': folder.paginator(),
             'query':query,
             'form':form }, 

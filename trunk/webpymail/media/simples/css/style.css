@@ -48,6 +48,7 @@ body {
 
 .boxed {
     color: black;
+    background: #acacac;
     margin-top:0.3em;
     padding: 0.3em;
     height: 100%;
@@ -140,6 +141,7 @@ div.message_list p {
 
 .msglst_pagination img {
     vertical-align:top;
+    border-style: none;
 }
 
 div.message_header {
