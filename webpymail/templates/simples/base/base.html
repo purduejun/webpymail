@@ -7,6 +7,7 @@
     {% block headercontent %}{% endblock %}
 </head>
 <body>
+<div id="application">
 <div id="navheader">
   <div class="left">
     {% block prev_section %} {% endblock %}
@@ -37,6 +38,7 @@
      {% block cur_section_f %} {% endblock %}
   </div>
   <div class="clearall"></div>
+</div>
 </div>
 <div id="footer">
     {% block footer %}{% trans "✉ WebPyMail SVN - Simples theme ✉" %}{% endblock %}
