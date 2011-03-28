@@ -26,6 +26,7 @@
 from imapmessage import MessageList
 from imaplib2.parselist import Mailbox
 import base64
+import re
 
 class DupError(Exception): pass
 class NoSuchFolder(Exception): pass
@@ -168,6 +169,17 @@ class FolderTree(object):
                 children = self.folder_dict[folder_name]['children']
                 for child in self.iter_expand( children ):
                     yield child
+
+    def iter_match(self, regex = '.*'):
+        '''Iteract through matching mailbox paths
+        '''
+        cre = re.compile( regex )
+        if not self.folder_dict:
+            self.refresh_folders(subscribed=False)
+
+        for folder in self.iter_all():
+            if cre.search( folder.path ):
+                yield folder
 
     # Folder operations
     def get_folder(self, path):
@@ -354,6 +366,9 @@ class Folder(object):
             self.message_list.refresh_messages()
 
     def set_flags(self, message_list, *args ):
+        # TODO: this method sould accept MessageList objects
+        if not message_list:
+            return
         response = self._imap.store(message_list, '+FLAGS.SILENT', args)
         if self._imap.expunged() and self.__message_list:
             # Some servers expunge the messages when we mark a message deleted!
@@ -405,8 +420,3 @@ class Folder(object):
 
     def __iter__(self):
         return self.message_list.msg_iter_page()
-
-
-
-
-

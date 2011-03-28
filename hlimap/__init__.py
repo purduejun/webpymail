@@ -46,7 +46,4 @@ Server Level
 First we have to create an instance of L{ImapServer<ImapServer>}, and login only
 the server:
 
-
-
-
 '''
