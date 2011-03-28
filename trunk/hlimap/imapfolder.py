@@ -114,9 +114,7 @@ class FolderTree(object):
         '''
         def compare( name1, name2 ):
             spc1 = self.folder_dict[name1]['data'].special
-
             spc2 = self.folder_dict[name2]['data'].special
-
             if spc1 and not spc2:
                 return -1
             elif not spc1 and spc2:

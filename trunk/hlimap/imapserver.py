@@ -107,13 +107,6 @@ class ImapServer(object):
 
         self.set_folder_iterator()
 
-    def folder_iter(self):
-        '''
-        First show the special folders, then rest of the folders
-        if a folder is in the expandable list show also the sub folders.
-        '''
-        return self.folders()
-
     def set_folder_iterator(self):
         '''Pre-defines the iterator to use on the folder tree. The available
         iterators are defined on FolderTree

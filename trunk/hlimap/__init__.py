@@ -37,6 +37,83 @@ python.
 
 This library only exports the L{ImapServer<ImapServer>} class.
 
+ImapServer Class
+================
+
+class hlimap.ImapServer( host='localhost', port=None, ssl=False, keyfile=None,
+                         certfile=None )
+
+This class establishes the connection to the IMAP server. When instantiated the
+resulting object can be used to access the folder tree and the messages.
+
+Methods:
+
+ImapServer.login(username, password) - Authenticates against the server.
+
+ImapServer.set_special_folders(*folder_list) - stores the special folders, this
+            information is used by the sort method. The special folders appear
+            first on the folder list. 
+
+ImapServer.set_expand_list(*folder_list) - stores the folders to expand. Just
+            as with the special folders, this is used when iterating through
+            the folders. Only the folders set to expand will have their sub
+            folders displayed.
+
+ImapServer.refresh_folders(subscribed = True) - Extracts the folder list from 
+            the server. Retrieving the folder list is a lazy operation. If we
+            want to access a single folder, we simply select it, so it's not
+            necessary to retrieve the complete list.
+
+ImapServer.set_folder_iterator() -  Sets the iterator to use when going through
+            the folders. There are available several iterators defined on the
+            FolderTree class.
+            TODO: This iterator selection mechanism should be remade. This 
+            method is used only internally to the ImapServer class, however it's
+            useful to change the iterator on the fly (that was the original
+            objective), the current method is awkward.
+
+ImapServer.__del__() - logs out of the imap server when the ImapServer instance
+            is deleted.
+
+ImapServer.__getitem__(path) - get a Folder object.
+
+ImapServer.__iter__() - Iterates through the user accessible folders.
+
+
+--------------------------------------------------------------------------------
+
+FolderTree Class
+================
+
+
+Folder Class
+============
+
+
+Flags Class
+===========
+
+
+--------------------------------------------------------------------------------
+
+MessageList Class
+=================
+
+
+Message Class
+=============
+
+
+Paginator Class
+===============
+
+
+Sorter Class
+============
+
+
+--------------------------------------------------------------------------------
+
 Example Usage
 =============
 
