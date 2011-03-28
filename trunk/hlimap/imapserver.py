@@ -59,7 +59,7 @@ class ImapServer(object):
 
         self.special_folders = []
         self.expand_list = []
-        self.folder_tree = None
+        self.__folder_tree = None
         self.folder_iterator = 'iter_expand'
 
     # IMAP methods
@@ -88,13 +88,16 @@ class ImapServer(object):
         '''
         self.expand_list = folder_list
 
+    def _get_folder_tree(self):
+        if not self.__folder_tree:
+            self.__folder_tree = FolderTree( self )
+        return self.__folder_tree 
+    folder_tree = property( _get_folder_tree )
+
     def refresh_folders(self, subscribed = True):
         '''This method extracts the folder list from the
         server.
         '''
-        if not self.folder_tree:
-            self.folder_tree = FolderTree( self )
-
         self.folder_tree.refresh_folders( subscribed )
 
         self.folder_tree.set_properties(self.expand_list,
