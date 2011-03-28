@@ -77,8 +77,8 @@ class FolderTree(object):
     def add_folder( self, parts, subscribed, child = None, noselect = False ):
         path = self.dl.join( parts )
         if not self.folder_dict.has_key(path):
-            self.folder_dict[ path ] = { 'data' : Folder(self.server, self, parts,
-                                                         subscribed, noselect),
+            self.folder_dict[ path ] = { 'data' : Folder(self.server, self, 
+                                            parts, subscribed, noselect),
                                          'children': [] }
             if len(parts) == 1:
                 self.root_folder.append( path )
@@ -387,9 +387,11 @@ class Folder(object):
     def __unicode__(self):
         mailbox = self.name
         try:
-            return unicode(mailbox.replace('+','+-').replace('&','+').replace(',','/'),'utf-7')
+            return unicode(mailbox.replace('+','+-').replace('&','+'
+                ).replace(',','/'),'utf-7')
         except UnicodeDecodeError:
-            return unicode(mailbox.replace('+','+-').replace('&','+').replace(',','/'),'utf-8')
+            return unicode(mailbox.replace('+','+-').replace('&','+'
+                ).replace(',','/'),'utf-8')
 
     def __repr__(self):
         return '<Folder instance "%s">' % (self.name)
