@@ -31,8 +31,8 @@ This module is part of the hlimap lib.
 Notes
 =====
 
-At this level we have the problem of getting and presenting the message list, and
-the message it self.
+At this level we have the problem of getting and presenting the message list,
+and the message it self.
 
 Message List
 ------------
@@ -423,11 +423,11 @@ class MessageList(object):
             #
             # PROBLEM: the THREAD command only sorts by date which is not
             # the best choice IMO, I may want a threaded list and have it
-            # sorted by subject. So we have to do all the sorting client side
-            # even if we have the SORT extension when the user wants a threaded
-            # view. arrrgghhh! Even on this case it's good to have the threading
-            # extension, since we can get the threaded list, and only do the
-            # sorting client side...
+            # sorted by subject. So we have to do all the sorting client
+            # side even if we have the SORT extension when the user wants a
+            # threaded view. arrrgghhh! Even on this case it's good to have
+            # the threading extension, since we can get the threaded list,
+            # and only do the  sorting client side...
         else:
             if self.show_style == THREADED:
                 flat_message_list = list(flaten_nested(message_list))
@@ -487,13 +487,15 @@ class MessageList(object):
             if self.paginator.msg_per_page == -1:
                 message_list = self.flat_message_list
             else:
-                first_msg = ( self.paginator.current_page - 1 ) * self.paginator.msg_per_page
+                first_msg = ( self.paginator.current_page - 1 
+                            ) * self.paginator.msg_per_page
                 last_message = first_msg + self.paginator.msg_per_page - 1
                 message_list = self.flat_message_list[first_msg:last_message+1]
 
             if message_list:
                 for msg_id,msg_info in self._imap.fetch(message_list,
-                            '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)').iteritems():
+                            '(ENVELOPE RFC822.SIZE FLAGS INTERNALDATE)'
+                                                       ).iteritems():
                     self.message_dict[msg_id]['data'] = Message(
                         self.server, self.folder, msg_info )
 
@@ -522,7 +524,8 @@ class MessageList(object):
         if self.paginator.msg_per_page == -1:
             message_list = self.flat_message_list
         else:
-            first_msg = ( self.paginator.current_page - 1 ) * self.paginator.msg_per_page
+            first_msg = ( self.paginator.current_page - 1 
+                        ) * self.paginator.msg_per_page
             last_message = first_msg + self.paginator.msg_per_page - 1
             message_list = self.flat_message_list[first_msg:last_message+1]
 
@@ -576,10 +579,10 @@ class Message(object):
             try:
                 return unicode(text, part.charset())
             except (UnicodeDecodeError, LookupError):
-                # Some times the messages have the wrong encoding, for instance
-                # PHPMailer sends a text/plain with charset utf-8 but the actual
-                # contents are iso-8859-1. Here we can try to guess the encoding
-                # on a case by case basis.
+                # Some times the messages have the wrong encoding, for
+                # instance PHPMailer sends a text/plain with charset utf-8
+                # but the actual contents are iso-8859-1. Here we can try
+                # to guess the encoding on a case by case basis.
                 try:
                     return unicode(text, 'iso-8859-1')
                 except:
@@ -625,15 +628,16 @@ class Message(object):
            if self._imap.is_expunged(self.id):
                # The message no longer exists
                self._imap.reset_expunged()
-               raise MessageNotFound('The message was expunged, Google IMAP does this...')
+               raise MessageNotFound('The message was expunged,'
+                    ' Google IMAP does this...')
 
-        self.get_flags( self._imap.sstatus['fetch_response'][self.uid]['FLAGS'] )
+        self.get_flags(self._imap.sstatus['fetch_response'][self.uid]['FLAGS'])
 
     def reset_flags(self, *args ):
         self._imap.store(self.uid, '-FLAGS', args)
-        self.get_flags( self._imap.sstatus['fetch_response'][self.uid]['FLAGS'] )
+        self.get_flags(self._imap.sstatus['fetch_response'][self.uid]['FLAGS'])
 
     # Special methods
     def __repr__(self):
-        return '<Message instance in folder "%s", uid "%s">' % (self.folder.name,
-            self.uid)
+        return '<Message instance in folder "%s", uid "%s">' % (
+            self.folder.name, self.uid)
