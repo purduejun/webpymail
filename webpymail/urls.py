@@ -48,7 +48,7 @@ urlpatterns = patterns('',
     (r'^auth/', include('webpymail.wpmauth.urls')),
 
     # Admin Interface:
-    (r'^admin/(.*)', admin.site.root),
+    (r'^admin/', include(admin.site.urls)),
 
     # Generic:
     url(r'^not_implemented/$', 'webpymail.mailapp.views.message.not_implemented',
