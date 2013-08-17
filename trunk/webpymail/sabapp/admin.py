@@ -30,6 +30,6 @@
 # Imports:
 # Django
 from django.contrib import admin
-from webpymail.sabapp.models import Address
+from sabapp.models import Address
 
 admin.site.register(Address)

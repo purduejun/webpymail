@@ -53,7 +53,7 @@ from django.utils.translation import ugettext as _
 # Local Imports
 from mailapp.models import Attachments
 from mail_utils import serverLogin, send_mail, join_address_list, mail_addr_str, mail_addr_name_str, quote_wrap_lines, show_addrs, compose_rfc822
-from webpymail.utils.config import WebpymailConfig
+from utils.config import WebpymailConfig
 from themesapp.shortcuts import render_to_response
 
 from mailapp.forms import ComposeMailForm

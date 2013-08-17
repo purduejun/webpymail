@@ -30,7 +30,7 @@
 # Imports:
 # Django
 from django.contrib import admin
-from webpymail.mailapp.models import UserIdentity, UserProfile
+from mailapp.models import UserIdentity, UserProfile
 
 admin.site.register(UserIdentity)
 admin.site.register(UserProfile)

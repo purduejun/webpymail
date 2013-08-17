@@ -29,29 +29,29 @@
 
 # Global imports:
 from django.conf import settings
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
 admin.autodiscover()
 
 urlpatterns = patterns('',
     # Root:
-    (r'^$','webpymail.mailapp.views.message.index'),
+    (r'^$','mailapp.views.message.index'),
 
     # Mail Interface:
-    (r'^mail/', include('webpymail.mailapp.urls')),
+    (r'^mail/', include('mailapp.urls')),
 
     # Address book:
-    (r'^ab/', include('webpymail.sabapp.urls')),
+    (r'^ab/', include('sabapp.urls')),
 
     # Authentication interface:
-    (r'^auth/', include('webpymail.wpmauth.urls')),
+    (r'^auth/', include('wpmauth.urls')),
 
     # Admin Interface:
     (r'^admin/', include(admin.site.urls)),
 
     # Generic:
-    url(r'^not_implemented/$', 'webpymail.mailapp.views.message.not_implemented',
+    url(r'^not_implemented/$', 'mailapp.views.message.not_implemented',
         name='not_implemented'),
 )
 

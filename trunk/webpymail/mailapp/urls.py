@@ -27,7 +27,7 @@
 """Mail interface"""
 
 # Global imports:
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 folder_pat = r'FOLDER_(?P<folder>[A-Za-z0-9+.&%_=-]+)'
 

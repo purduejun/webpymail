@@ -24,11 +24,11 @@
 # $Id$
 #
 
-from django.conf.urls.defaults import patterns, url
+from django.conf.urls import patterns, url
 
 """Authentication interface"""
 
-urlpatterns = patterns('webpymail.wpmauth.views',
+urlpatterns = patterns('wpmauth.views',
     url(r'^login/$', 'loginView', name='login'),
     url(r'^logout/$', 'logoutView', name='logout'),
     )
