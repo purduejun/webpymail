@@ -28,7 +28,7 @@ from django.conf import settings
 from django.http import HttpResponse
 from django.template import loader
 
-from webpymail.utils.config import WebpymailConfig
+from utils.config import WebpymailConfig
 
 DEFAULT_THEME = getattr(settings, 'DEFAULT_THEME', 'default')
 
@@ -43,7 +43,7 @@ def get_theme( request ):
         3. If the user is authenticated, the configuration key general.theme is read
         4. The default theme defined in the django settings file with the key DEFAULT_THEME
     '''
-    # From the GET request 
+    # From the GET request
     theme = request.GET.get('theme', None)
     if theme:
         request.session['theme'] = theme
@@ -66,9 +66,9 @@ def get_theme( request ):
 
 def render_to_response(*args, **kwargs):
     '''
-    This is a version of the default django render_to_response shortcut. 
-    Just like the original it returns a HttpResponse whose content is 
-    filled with the result of calling django.template.loader.render_to_string() 
+    This is a version of the default django render_to_response shortcut.
+    Just like the original it returns a HttpResponse whose content is
+    filled with the result of calling django.template.loader.render_to_string()
     with the passed arguments.
 
     Besides this, if the template argument is a string then transforms it into a
@@ -78,15 +78,18 @@ def render_to_response(*args, **kwargs):
 
     The first template to be found is used.
     '''
-    httpresponse_kwargs = {'mimetype': kwargs.pop('mimetype', None)}
+    httpresponse_kwargs = {'content_type': kwargs.pop('content_type', None)}
 
-    if not isinstance(args[0], (list, tuple)): 
+    if not isinstance(args[0], (list, tuple)):
         if kwargs.has_key('context_instance'):
             request = kwargs['context_instance']['request']
         else:
             request = None
-        theme = get_theme( request ) 
-        print "get_theme returns:", theme
+        theme = get_theme( request )
+
+        if settings.DEBUG:
+            print "get_theme returns:", theme
+
         template = [ '%s/%s' % (theme, args[0]), '%s/%s' % (DEFAULT_THEME, args[0]), args[0] ]
         args = list(args)
         args[0] = template

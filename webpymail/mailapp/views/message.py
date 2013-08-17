@@ -41,7 +41,7 @@ from django.utils.translation import gettext_lazy as _
 # Local
 from mail_utils import serverLogin
 from themesapp.shortcuts import render_to_response
-from webpymail.utils.config import WebpymailConfig
+from utils.config import WebpymailConfig
 import msgactions
 
 import hlimap
@@ -127,7 +127,7 @@ def get_msg_part( request, folder, uid, part_number, inline = False ):
     message = folder[int(uid)]
     part = message.bodystructure.find_part(part_number)
 
-    response = HttpResponse(mimetype='%s/%s' % (part.media, part.media_subtype))
+    response = HttpResponse(content_type='%s/%s' % (part.media, part.media_subtype))
 
     if part.filename():
         filename = part.filename()
@@ -160,7 +160,7 @@ def not_implemented(request):
 def index(request):
     '''
     This is the main index, it reads the configuration file and
-    redirects to the default view defined on the configuration 
+    redirects to the default view defined on the configuration
     file.
     '''
     config = WebpymailConfig( request )

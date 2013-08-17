@@ -90,13 +90,13 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.middleware.doc.XViewMiddleware',
+    'django.contrib.admindocs.middleware.XViewMiddleware',
 )
 
 ROOT_URLCONF = 'webpymail.urls'
 
-CURDIR = os.path.dirname(__file__)
-TEMPLATE_DIRS = ( os.path.join(CURDIR, 'templates').replace('\\', '/'), )
+PROJDIR = os.path.join( os.path.abspath(os.path.dirname(__file__)), '..' )
+TEMPLATE_DIRS = ( os.path.join(PROJDIR, 'templates').replace('\\', '/'), )
 
 INSTALLED_APPS = (
     # Django apps
@@ -106,10 +106,10 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # WebPyMail apps
-    'webpymail.wpmauth',
-    'webpymail.mailapp',
-    'webpymail.sabapp',
-    'webpymail.themesapp',
+    'wpmauth',
+    'mailapp',
+    'sabapp',
+    'themesapp',
 )
 
 ######################
@@ -143,7 +143,7 @@ SESSION_COOKIE_NAME = 'wpm_sessionid'
 # AUTHENTICATION
 
 AUTHENTICATION_BACKENDS = (
-    'webpymail.wpmauth.backends.ImapBackend',
+    'wpmauth.backends.ImapBackend',
     'django.contrib.auth.backends.ModelBackend',
     )
 
@@ -169,7 +169,7 @@ TEMPDIR = '/tmp' # Temporary dir to store the attachements
 # User configuration dir:
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
-CONFIGDIR = os.path.join(BASEDIR,'config')
+CONFIGDIR = os.path.join('/home/helder/prg/webpymail-config')
 USERCONFDIR = os.path.join(CONFIGDIR, 'users')
 SERVERCONFDIR = os.path.join(CONFIGDIR, 'servers')
 FACTORYCONF = os.path.join(CONFIGDIR,'factory.conf')
