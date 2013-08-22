@@ -8,11 +8,11 @@
 {% endblock %}
 
 {% block prev_section %}
-    <a class="boxed" href="{% url message_list folder.url %}">{{ folder }}</a>
+    <a class="boxed" href="{% url 'message_list' folder.url %}">{{ folder }}</a>
 {% endblock %}
 
 {% block prev_section_f %}
-    <a class="boxed" href="{% url message_list folder.url %}">{{ folder.unicode_name }}</a>
+    <a class="boxed" href="{% url 'message_list' folder.url %}">{{ folder.unicode_name }}</a>
 {% endblock %}
 
 {% block contents %}
@@ -41,7 +41,7 @@
           {% ifhasaddr addr %}
             <img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">
           {% else %}
-            <a href="{% url add_address %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url mailapp-message folder=folder.url,uid=message.uid %}">
+            <a href="{% url 'add_address' %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url 'mailapp-message' folder=folder.url uid=message.uid %}">
               <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">
             </a>
           {% endifhasaddr %}
@@ -57,7 +57,7 @@
           {% ifhasaddr addr %}
             <img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">
           {% else %}
-            <a href="{% url add_address %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url mailapp-message folder=folder.url,uid=message.uid %}">
+            <a href="{% url 'add_address' %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url 'mailapp-message' folder=folder.url uid=message.uid %}">
               <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">
             </a>
           {% endifhasaddr %}
@@ -73,7 +73,7 @@
           {% ifhasaddr addr %}
             <img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">
           {% else %}
-            <a href="{% url add_address %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url mailapp-message folder=folder.url,uid=message.uid %}">
+            <a href="{% url 'add_address' %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url 'mailapp-message' folder=folder.url uid=message.uid %}">
               <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">
             </a>
           {% endifhasaddr %}
@@ -89,7 +89,7 @@
           {% ifhasaddr addr %}
             <img src="{{ MEDIA_URL }}img/star_yellow.png" width=16 height=16 alt="Bookmarked">
           {% else %}
-            <a href="{% url add_address %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url mailapp-message folder=folder.url,uid=message.uid %}">
+            <a href="{% url 'add_address' %}?{% if addr.0 %}first_name={{addr.0|first_name}}&last_name={{addr.0|last_name}}&{% endif %}email={{addr.1}}&next={% url 'mailapp-message' folder=folder.url uid=message.uid %}">
               <img src="{{ MEDIA_URL }}img/star_empty.png" width=16 height=16 alt="Not bookmarked">
             </a>
           {% endifhasaddr %}
@@ -180,8 +180,8 @@
     {% if part.is_attachment and not part.is_encapsulated %} {# Attachment handling #}
     {% if inline_img and part.media == "IMAGE" %} {# Show inlined images #}
         <p>
-          <img src="{% url mailapp_mpart_inline folder=folder.url,uid=message.uid,part_number=part.part_number %}" width="750"><br>
-          <a href="{% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %}">{% trans "Download" %}{% if part.filename %} {{ part.filename }}{% endif %}</a>
+          <img src="{% url 'mailapp_mpart_inline' folder=folder.url uid=message.uid part_number=part.part_number %}" width="750"><br>
+          <a href="{% url 'mailapp_message_part' folder=folder.url uid=message.uid part_number=part.part_number %}">{% trans "Download" %}{% if part.filename %} {{ part.filename }}{% endif %}</a>
         </p>
       {% else %}
         <div class="attach_link">
@@ -193,7 +193,7 @@
               </tr>
               <tr>
                 <td>
-                  <a href="{% url mailapp_message_part folder=folder.url,uid=message.uid,part_number=part.part_number %}">{% if part.filename %}{{ part.filename }}{% else %}{% trans "Unknown.dat" %}{% endif %}</a>
+                  <a href="{% url 'mailapp_message_part' folder=folder.url uid=message.uid part_number=part.part_number %}">{% if part.filename %}{{ part.filename }}{% else %}{% trans "Unknown.dat" %}{% endif %}</a>
                 </td>
               </tr>
               <tr>
@@ -202,7 +202,7 @@
               <tr>
                   <td>
                     {% if part.media == "IMAGE" %}
-                    <a href="{% url mailapp_mpart_inline folder=folder.url,uid=message.uid,part_number=part.part_number %}">{% trans "View on-line" %}</a>
+                    <a href="{% url 'mailapp_mpart_inline' folder=folder.url uid=message.uid part_number=part.part_number %}">{% trans "View on-line" %}</a>
                     {% endif %}
                   </td>
               </tr>
@@ -222,7 +222,7 @@
 
 <div id="sub_menu">
     <div class="float_right">
-      <form method="post" action="{% url mailapp-message folder=message.folder.url,uid=message.uid %}">
+      <form method="post" action="{% url 'mailapp-message' folder=message.folder.url uid=message.uid %}">
         {% if message.deleted %}
             <input type="submit" name="undelete" value="{% trans "Undelete" %}" />
         {% else %}
@@ -230,9 +230,9 @@
         {% endif %}
       </form>
     </div>
-    <a href="{% url mailapp_reply_message folder=message.folder.url,uid=message.uid %}">↺{% trans "Reply" %}</a>
-    <a href="{% url mailapp_reply_all_message folder=message.folder.url,uid=message.uid %}">↺↺{% trans "Reply All" %}</a>
-    <a href="{% url mailapp_forward_inline_message folder=message.folder.url,uid=message.uid %}">→{% trans "Forward" %}</a>
-    <a href="{% url mailapp_forward_message folder=message.folder.url,uid=message.uid %}">→{% trans "Forward as Attachment" %}</a>
+    <a href="{% url 'mailapp_reply_message' folder=message.folder.url uid=message.uid %}">↺{% trans "Reply" %}</a>
+    <a href="{% url 'mailapp_reply_all_message' folder=message.folder.url uid=message.uid %}">↺↺{% trans "Reply All" %}</a>
+    <a href="{% url 'mailapp_forward_inline_message' folder=message.folder.url uid=message.uid %}">→{% trans "Forward" %}</a>
+    <a href="{% url 'mailapp_forward_message' folder=message.folder.url uid=message.uid %}">→{% trans "Forward as Attachment" %}</a>
 </div>
 {% endblock %}

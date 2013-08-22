@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block extra_menus %}
-<a href="{% url folder_list %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;{% endblock %}
+<a href="{% url 'folder_list' %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;{% endblock %}
 
 {% block contents %}
 
@@ -19,7 +19,7 @@
 </div>
 {% endif %}
 
-<form enctype="multipart/form-data" method="post" action="{% url mailapp_send_message %}">
+<form enctype="multipart/form-data" method="post" action="{% url 'mailapp_send_message' %}">
 
 <table class="msg_form" width="100%">
 {{ form }}

@@ -1,8 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 {% load loader_tags %}
 {% load i18n %}
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html>
 <head>
     <title>{% block title %}{% trans "WebPyMail" %}{% endblock %}</title>
     <link href="{{ MEDIA_URL }}css/normal.css" rel="stylesheet" type="text/css"></link>
@@ -13,15 +12,15 @@
 
 <div id="header_main">
     <div id="header_right">
-        <a href="{% url not_implemented %}">{% trans "Options" %}</a>&nbsp;&nbsp;
-        <a href="{% url not_implemented %}">{% trans "About" %}</a>&nbsp;&nbsp;
-        <a href="{% url logout %}">{% trans "Logout" %}</a>
+        <a href="{% url 'not_implemented' %}">{% trans "Options" %}</a>&nbsp;&nbsp;
+        <a href="{% url 'not_implemented' %}">{% trans "About" %}</a>&nbsp;&nbsp;
+        <a href="{% url 'logout' %}">{% trans "Logout" %}</a>
     </div>
     {% block extra_menus %}{% endblock %}
-    {# <a href="{% url mailapp_send_message folder=folder.folder %}">{% trans "Compose" %}</a>&nbsp;&nbsp; #}
-    <a href="{% url not_implemented %}">{% trans "Search" %}</a>&nbsp;&nbsp;
-    <a href="{% url not_implemented %}">{% trans "Manage Folders" %}</a>&nbsp;&nbsp;
-    <a href="{% url browse_addresses %}">{% trans "Addresses" %}</a>
+    {# <a href="{% url 'mailapp_send_message' folder=folder.folder %}">{% trans "Compose" %}</a>&nbsp;&nbsp; #}
+    <a href="{% url 'not_implemented' %}">{% trans "Search" %}</a>&nbsp;&nbsp;
+    <a href="{% url 'not_implemented' %}">{% trans "Manage Folders" %}</a>&nbsp;&nbsp;
+    <a href="{% url 'browse_addresses' %}">{% trans "Addresses" %}</a>
 </div>
 
 <!-- The Main Body -->
