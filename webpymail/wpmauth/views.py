@@ -29,17 +29,21 @@
 
 # Global imports:
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as auth_login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, HttpResponse
 from django.template import RequestContext
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_protect
 
 # Local imports:
 from forms import LoginForm
 from utils.config import server_config, WebpymailConfig
 from themesapp.shortcuts import render_to_response
 
+@csrf_protect
+@never_cache
 def loginView(request):
     """Login the user on the system
     """
@@ -72,7 +76,7 @@ def loginView(request):
                     context_instance=RequestContext(request))
             if user is not None:
                 if user.is_active:
-                    login(request, user)
+                    auth_login(request, user)
 
                     # Not an imap user:
                     if (request.session['_auth_user_backend'] ==
