@@ -10,10 +10,10 @@
 {% block inpage_title %}{% trans "Message Header" %}{% endblock %}
 
 {% block extra_menus %}
-  <a href="{% url message_list folder.url %}">
+  <a href="{% url 'message_list' folder.url %}">
     {% trans "Message List" %}
   </a>&nbsp;&nbsp;
-  <a href="{% url folder_list %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;
+  <a href="{% url 'folder_list' %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;
 {% endblock %}
 
 {% block contents %}

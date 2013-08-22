@@ -5,7 +5,7 @@
 
 {% block contents %}
 <br />
-<form method="post" action=".">
+<form method="post" action=".">{% csrf_token %}
 <center>
 <table>
 {{ form }}

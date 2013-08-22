@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block extra_menus %}
-<a href="{% url folder_list %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;
-<a href="{% url mailapp_send_message %}">{% trans "New Message" %}</a>&nbsp;&nbsp;
+<a href="{% url 'folder_list' %}">{% trans "Folder List" %}</a>&nbsp;&nbsp;
+<a href="{% url 'mailapp_send_message' %}">{% trans "New Message" %}</a>&nbsp;&nbsp;
 {% endblock %}
 
 
@@ -21,16 +21,16 @@
     <tr>
         <th>{% trans "Tags:" %}</th><td>
 {% for flag in folder.flags.keywords %}
-    <a href="{% url message_list folder.url %}?flag={{ flag }}">{{ flag }}</a>
+    <a href="{% url 'message_list' folder.url %}?flag={{ flag }}">{{ flag }}</a>
 {% endfor %} </td>
-        <th colspan="2"><a href="{% url message_list folder.url %}">{% trans "No Filter"%}</a></th>
+        <th colspan="2"><a href="{% url 'message_list' folder.url %}">{% trans "No Filter"%}</a></th>
     </tr>
 </table>
 </div>
 
 {% if folder.have_messages %}
 
-<form method="post" action="{% url message_list folder.url %}">
+<form method="post" action="{% url 'message_list' folder.url %}">
 
 <div class="message_actions">
 {{ form.action }}
@@ -50,7 +50,7 @@
     <div class={% if message.seen %}"seen"{% else %}"not_seen"{% endif %}>
     {% if message.deleted %}<div class="deleted">{% endif %}
     <p><input type="checkbox" name="messages" value="{{message.uid }}">
-       <a href="{% url mailapp-message folder=folder.url,uid=message.uid %}">
+       <a href="{% url 'mailapp-message' folder=folder.url uid=message.uid %}">
         {% if message.envelope.env_subject %}{{ message.envelope.env_subject }}
         {% else %}{% trans "(No subject)" %}{% endif %}</a></p>
     </div>
