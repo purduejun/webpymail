@@ -91,7 +91,7 @@ class ImapServer(object):
     def _get_folder_tree(self):
         if not self.__folder_tree:
             self.__folder_tree = FolderTree( self )
-        return self.__folder_tree 
+        return self.__folder_tree
     folder_tree = property( _get_folder_tree )
 
     def refresh_folders(self, subscribed = True):
@@ -136,7 +136,7 @@ class ImapServer(object):
 
     def __iter__(self):
         '''Iteracts through the folders'''
-        if not self.folder_tree:
+        if not self.folder_tree or not hasattr(self, 'folders'):
             self.refresh_folders()
 
         return self.folders()
