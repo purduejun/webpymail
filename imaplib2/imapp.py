@@ -323,6 +323,8 @@ class IMAP4P:
                 self.sstatus['current_folder']['is_readonly'] = False
             elif code in ('ALERT', 'TRYCREATE', 'PARSE'):
                 self.infolog.addEntry(code, message )
+            elif code == 'CAPABILITY':
+                self.CAPABILITY_response( code, args)
             else:
                 raise self.Error('Don\'t know how to parse  %s - %s' % \
                     (code, args))
